@@ -8,6 +8,7 @@ public class Vehicle {
 	public EMERGENCYTYPE emergencyType;
 	public MALFUNCTIONTYPE malfunctionType;
 	public int numOfPeople;
+	public double lostPrivacy;
 
 	// public double vehiclePrivacy;
 	// public double emergencyPrivacy;
@@ -29,6 +30,7 @@ public class Vehicle {
 		this.malfunctionType = malfunction;
 		this.numOfPeople = num;
 		this.utility = 0;
+		this.lostPrivacy = 0;
 		setPrivacyRandom();
 		for (int i = 0; i < 4; i++) {
 			 System.out.print(privacy[i] + " ");
@@ -48,6 +50,8 @@ public class Vehicle {
 		for (int i = 0; i < 4; i++) {
 			enabled[i] = false;
 		}
+		this.lostPrivacy = 0;
+		this.utility = 0;
 	}
 
 	public void setPrivacyRandom() {
@@ -96,21 +100,25 @@ public class Vehicle {
 		int min = getMinPrivacy();
 		if (min == 0 && privacy[0] < 0.8) {
 			System.out.println("Vehicle Type privacy = " + privacy[0]);
+			this.lostPrivacy+=privacy[0];
 			utility += this.vehicleType.getValue() * Main.proportionVehicleType;
 			return this.vehicleType.getValue() * Main.proportionVehicleType;
 		}
 		if (min == 1 && privacy[1] < 0.8) {
 			System.out.println("Emergency Type privacy = " + privacy[1]);
+			this.lostPrivacy+=privacy[1];
 			utility += this.emergencyType.getValue() * Main.proportionEmergencyType;
 			return this.emergencyType.getValue() * Main.proportionEmergencyType;
 		}
 		if (min == 2 && privacy[2] < 0.8) {
 			System.out.println("Malfunction Type privacy = " + privacy[2]);
+			this.lostPrivacy+=privacy[2];
 			utility += this.malfunctionType.getValue() * Main.proportionMalfunctionType;
 			return this.malfunctionType.getValue() * Main.proportionMalfunctionType;
 		}
 		if (min == 3 && privacy[3] < 0.8) {
 			System.out.println("Number of People privacy = " + privacy[3]);
+			this.lostPrivacy+=privacy[3];
 			utility += this.numOfPeople / 50.0 * Main.proportionNumberPeople;
 			return this.numOfPeople / 50.0 * Main.proportionNumberPeople;
 		}
