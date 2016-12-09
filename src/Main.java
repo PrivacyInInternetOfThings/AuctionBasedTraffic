@@ -29,6 +29,7 @@ public class Main {
 				} else {
 					System.out.println("Vehicle " + (j + 1) + " gets priority");
 				}
+				System.out.println("v1 lostPrivacy: " + vehicles.get(i).lostPrivacy + " v2 lostPrivacy: " + vehicles.get(j).lostPrivacy);
 				vehicles.get(i).clear();
 				vehicles.get(j).clear();
 				System.out.println();
