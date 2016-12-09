@@ -56,8 +56,15 @@ public class Vehicle {
 		// this.emergencyPrivacy = rand.nextDouble();
 		// this.malfunctionPrivacy = rand.nextDouble();
 		// this.peoplePrivacy = rand.nextDouble();
+		
+		double sum = 0;
+		
 		for (int i = 0; i < 4; i++) {
 			this.privacy[i] = rand.nextDouble();
+			sum += this.privacy[i];
+		}
+		for(int i =0;i<4;i++){
+			this.privacy[i] /= sum;
 		}
 	}
 
