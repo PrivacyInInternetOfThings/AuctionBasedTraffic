@@ -71,18 +71,6 @@ public class Main {
 					break;
 				}
 
-				// if (utility1 > utility2) {
-				// turn = 2;
-				// }
-				// else {
-				// double newOffer = v1.makeOffer();
-				// if(newOffer == 0){
-				// break;
-				// }
-				// utility1 += newOffer;
-				// System.out.println(" V1: " + utility1 + " V2: " + utility2);
-				//
-				// }
 			} else {
 				oldUtility2 = utility2;
 				utility2 += v2.makeOffer();
@@ -104,13 +92,6 @@ public class Main {
 					System.out.println("V2 doesn't have another move");
 					break;
 				}
-
-				// if (utility1 < utility2){
-				// turn = 1;
-				// }
-				// if (utility2 - oldUtility2 < 0.00001){
-				//
-				// }
 			}
 		}
 		if (utility1 >= utility2) {
