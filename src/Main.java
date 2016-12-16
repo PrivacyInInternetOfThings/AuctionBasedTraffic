@@ -50,48 +50,56 @@ public class Main {
 			System.out.println("Turn " + turn);
 			if (turn == 1) {
 				oldUtility1 = utility1;
-				utility1 += v1.makeOffer();
+				utility1 += v1.makeOffer(utility2);
 				System.out.println(" V1: " + utility1 + " V2: " + utility2);
 
-				while (utility1 < utility2 && utility1 - oldUtility1 != 0) {
-					System.out.println("Turn " + turn);
-					oldUtility1 = utility1;
-					utility1 += v1.makeOffer();
-
-					System.out.println(" V1: " + utility1 + " V2: " + utility2);
-				}
-
-				if (utility1 > utility2) {
-					turn = 2;
-					continue;
-				}
-
-				if (utility1 - oldUtility1 == 0) {
-					System.out.println("V1 doesn't have another move");
+				if(utility1 - oldUtility1 == 0){
 					break;
 				}
+				turn = 2;
+//				while (utility1 < utility2 && utility1 - oldUtility1 != 0) {
+//					System.out.println("Turn " + turn);
+//					oldUtility1 = utility1;
+//					utility1 += v1.makeOffer();
+//
+//					System.out.println(" V1: " + utility1 + " V2: " + utility2);
+//				}
+//
+//				if (utility1 > utility2) {
+//					turn = 2;
+//					continue;
+//				}
+//
+//				if (utility1 - oldUtility1 == 0) {
+//					System.out.println("V1 doesn't have another move");
+//					break;
+//				}
 
 			} else {
 				oldUtility2 = utility2;
-				utility2 += v2.makeOffer();
+				utility2 += v2.makeOffer(utility1);
 				System.out.println(" V1: " + utility1 + " V2: " + utility2);
-
-				while (utility2 < utility1 && utility2 - oldUtility2 != 0) {
-
-					System.out.println("Turn" + turn);
-					oldUtility2 = utility2;
-					utility2 += v2.makeOffer();
-					System.out.println(" V1: " + utility1 + " V2: " + utility2);
-				}
-				if (utility2 > utility1) {
-					turn = 1;
-					continue;
-				}
-
-				if (utility2 - oldUtility2 == 0) {
-					System.out.println("V2 doesn't have another move");
+				if(utility2 - oldUtility2 ==0){
 					break;
 				}
+				
+				turn = 1;
+//				while (utility2 < utility1 && utility2 - oldUtility2 != 0) {
+//
+//					System.out.println("Turn" + turn);
+//					oldUtility2 = utility2;
+//					utility2 += v2.makeOffer();
+//					System.out.println(" V1: " + utility1 + " V2: " + utility2);
+//				}
+//				if (utility2 > utility1) {
+//					turn = 1;
+//					continue;
+//				}
+//
+//				if (utility2 - oldUtility2 == 0) {
+//					System.out.println("V2 doesn't have another move");
+//					break;
+//				}
 			}
 		}
 		if (utility1 >= utility2) {

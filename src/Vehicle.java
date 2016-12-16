@@ -33,9 +33,10 @@ public class Vehicle {
 		this.lostPrivacy = 0;
 		setPrivacyRandom();
 		for (int i = 0; i < 4; i++) {
-			 System.out.print(privacy[i] + " ");
+			System.out.print(privacy[i] + " ");
 		}
-		System.out.println();System.out.println();
+		System.out.println();
+		System.out.println();
 	}
 
 	// public void setPrivacy(double vehicle, double emergency, double
@@ -60,14 +61,14 @@ public class Vehicle {
 		// this.emergencyPrivacy = rand.nextDouble();
 		// this.malfunctionPrivacy = rand.nextDouble();
 		// this.peoplePrivacy = rand.nextDouble();
-		
+
 		double sum = 0;
-		
+
 		for (int i = 0; i < 4; i++) {
 			this.privacy[i] = rand.nextDouble();
 			sum += this.privacy[i];
 		}
-		for(int i =0;i<4;i++){
+		for (int i = 0; i < 4; i++) {
 			this.privacy[i] /= sum;
 		}
 	}
@@ -107,29 +108,74 @@ public class Vehicle {
 		int min = getMinPrivacy();
 		if (min == 0 && privacy[0] < 0.8) {
 			System.out.println("Vehicle Type privacy = " + privacy[0]);
-			this.lostPrivacy+=privacy[0];
+			this.lostPrivacy += privacy[0];
 			utility += this.vehicleType.getValue() * Main.proportionVehicleType;
 			return this.vehicleType.getValue() * Main.proportionVehicleType;
 		}
 		if (min == 1 && privacy[1] < 0.8) {
 			System.out.println("Emergency Type privacy = " + privacy[1]);
-			this.lostPrivacy+=privacy[1];
+			this.lostPrivacy += privacy[1];
 			utility += this.emergencyType.getValue() * Main.proportionEmergencyType;
 			return this.emergencyType.getValue() * Main.proportionEmergencyType;
 		}
 		if (min == 2 && privacy[2] < 0.8) {
 			System.out.println("Malfunction Type privacy = " + privacy[2]);
-			this.lostPrivacy+=privacy[2];
+			this.lostPrivacy += privacy[2];
 			utility += this.malfunctionType.getValue() * Main.proportionMalfunctionType;
 			return this.malfunctionType.getValue() * Main.proportionMalfunctionType;
 		}
 		if (min == 3 && privacy[3] < 0.8) {
 			System.out.println("Number of People privacy = " + privacy[3]);
-			this.lostPrivacy+=privacy[3];
+			this.lostPrivacy += privacy[3];
 			utility += this.numOfPeople / 50.0 * Main.proportionNumberPeople;
 			return this.numOfPeople / 50.0 * Main.proportionNumberPeople;
 		}
 		return 0;
+	}
+
+	public double makeOffer(double opponentOffer) {
+		double newOffer = 0;
+		double offerLostPrivacy = 0;
+		int min;
+		do {
+			min = getMinPrivacy();
+			if (min == 0) {
+				System.out.println("Vehicle Type privacy = " + privacy[0]);
+				offerLostPrivacy += privacy[0];
+				utility += this.vehicleType.getValue() * Main.proportionVehicleType;
+				newOffer += this.vehicleType.getValue() * Main.proportionVehicleType;
+			}
+			if (min == 1) {
+				System.out.println("Emergency Type privacy = " + privacy[1]);
+				offerLostPrivacy += privacy[1];
+				utility += this.emergencyType.getValue() * Main.proportionEmergencyType;
+				newOffer += this.emergencyType.getValue() * Main.proportionEmergencyType;
+			}
+			if (min == 2) {
+				System.out.println("Malfunction Type privacy = " + privacy[2]);
+				offerLostPrivacy += privacy[2];
+				utility += this.malfunctionType.getValue() * Main.proportionMalfunctionType;
+				newOffer += this.malfunctionType.getValue() * Main.proportionMalfunctionType;
+			}
+			if (min == 3) {
+				System.out.println("Number of People privacy = " + privacy[3]);
+				offerLostPrivacy += privacy[3];
+				utility += this.numOfPeople / 50.0 * Main.proportionNumberPeople;
+				newOffer += this.numOfPeople / 50.0 * Main.proportionNumberPeople;
+			}
+			if(min == -1){
+				break;
+			}
+		} while (newOffer < opponentOffer);
+		
+		if(newOffer < opponentOffer){
+			
+			return 0;
+		}
+		this.lostPrivacy += offerLostPrivacy;
+		return newOffer;
+
+
 	}
 
 }
