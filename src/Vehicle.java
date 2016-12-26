@@ -138,6 +138,7 @@ public class Vehicle {
 			utility += this.numOfPeople / 50.0 * Main.proportionNumberPeople;
 			return this.numOfPeople / 50.0 * Main.proportionNumberPeople;
 		}
+		System.out.println("\tNo Offer");
 		return 0;
 	}
 

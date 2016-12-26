@@ -43,12 +43,15 @@ public class Main {
 					System.out.println("Vehicle " + (j + 1) + " gets priority");
 				}
 				System.out.println("v1 lostPrivacy: " + formatter.format(vehicles.get(i).lostPrivacy) + "/"
-						+ formatter.format(vehicles.get(i).totalPrivacy) + " v2 lostPrivacy: "
-						+ formatter.format(vehicles.get(j).lostPrivacy) + "/"
-						+ formatter.format(vehicles.get(j).totalPrivacy));
+						+ formatter.format(vehicles.get(i).totalPrivacy) + " "
+						+ formatter.format(100*vehicles.get(i).lostPrivacy / vehicles.get(i).totalPrivacy) + "%"
+						+ " v2 lostPrivacy: " + formatter.format(vehicles.get(j).lostPrivacy) + "/"
+						+ formatter.format(vehicles.get(j).totalPrivacy) + " "
+						+ formatter.format(100*vehicles.get(j).lostPrivacy / vehicles.get(j).totalPrivacy) + "%");
 				vehicles.get(i).clear();
 				vehicles.get(j).clear();
-				System.out.println();System.out.println();
+				System.out.println();
+				System.out.println();
 			}
 		}
 		System.out.println();
@@ -56,7 +59,7 @@ public class Main {
 		System.out.println();
 		for (int i = 0; i < vehicles.size(); i++) {
 			for (int j = i + 1; j < vehicles.size(); j++) {
-				System.out.println("v1 = Vehicle " + (i + 1) + " v2 = Vehicle " + (j + 1));				
+				System.out.println("v1 = Vehicle " + (i + 1) + " v2 = Vehicle " + (j + 1));
 				int result = makeNegotiationOld(vehicles.get(i), vehicles.get(j));
 				System.out.println("---------------------------------");
 				if (result == 1) {
@@ -65,12 +68,15 @@ public class Main {
 					System.out.println("Vehicle " + (j + 1) + " gets priority");
 				}
 				System.out.println("v1 lostPrivacy: " + formatter.format(vehicles.get(i).lostPrivacy) + "/"
-						+ formatter.format(vehicles.get(i).totalPrivacy) + " v2 lostPrivacy: "
-						+ formatter.format(vehicles.get(j).lostPrivacy) + "/"
-						+ formatter.format(vehicles.get(j).totalPrivacy));
+						+ formatter.format(vehicles.get(i).totalPrivacy) + " "
+						+ formatter.format(100*vehicles.get(i).lostPrivacy / vehicles.get(i).totalPrivacy) + "%"
+						+ " v2 lostPrivacy: " + formatter.format(vehicles.get(j).lostPrivacy) + "/"
+						+ formatter.format(vehicles.get(j).totalPrivacy) + " "
+						+ formatter.format(100*vehicles.get(j).lostPrivacy / vehicles.get(j).totalPrivacy) + "%");
 				vehicles.get(i).clear();
 				vehicles.get(j).clear();
-				System.out.println();System.out.println();
+				System.out.println();
+				System.out.println();
 			}
 		}
 	}
@@ -79,12 +85,12 @@ public class Main {
 		// Auction
 		double oldUtility1 = 0, oldUtility2 = 0;
 		double utility1 = 0, utility2 = 0;
-		System.out.println("\n-----------"+"Turn for v" + 1 + "-----------\n");
+		System.out.println("\n-----------" + "Turn for v" + 1 + "-----------\n");
 		utility1 += v1.makeOffer();
-		System.out.println("v1 utility: " + utility1 + " v2 utility: " + utility2);
+		System.out.println("\nv1 utility: " + utility1 + " v2 utility: " + utility2);
 		int turn = 2, count = 0;
 		while (++count < 15) {
-			System.out.println("\n-----------"+"Turn for v" + turn + "-----------\n");
+			System.out.println("\n-----------" + "Turn for v" + turn + "-----------\n");
 			if (turn == 1) {
 				oldUtility1 = utility1;
 				utility1 += v1.makeOffer(utility2);
@@ -94,24 +100,6 @@ public class Main {
 					break;
 				}
 				turn = 2;
-				// while (utility1 < utility2 && utility1 - oldUtility1 != 0) {
-				// System.out.println("Turn " + turn);
-				// oldUtility1 = utility1;
-				// utility1 += v1.makeOffer();
-				//
-				// System.out.println(" V1: " + utility1 + " V2: " + utility2);
-				// }
-				//
-				// if (utility1 > utility2) {
-				// turn = 2;
-				// continue;
-				// }
-				//
-				// if (utility1 - oldUtility1 == 0) {
-				// System.out.println("V1 doesn't have another move");
-				// break;
-				// }
-
 			} else {
 				oldUtility2 = utility2;
 				utility2 += v2.makeOffer(utility1);
@@ -121,22 +109,6 @@ public class Main {
 				}
 
 				turn = 1;
-				// while (utility2 < utility1 && utility2 - oldUtility2 != 0) {
-				//
-				// System.out.println("Turn" + turn);
-				// oldUtility2 = utility2;
-				// utility2 += v2.makeOffer();
-				// System.out.println(" V1: " + utility1 + " V2: " + utility2);
-				// }
-				// if (utility2 > utility1) {
-				// turn = 1;
-				// continue;
-				// }
-				//
-				// if (utility2 - oldUtility2 == 0) {
-				// System.out.println("V2 doesn't have another move");
-				// break;
-				// }
 			}
 		}
 		if (utility1 >= utility2) {
@@ -150,12 +122,12 @@ public class Main {
 		// Auction
 		double oldUtility1 = 0, oldUtility2 = 0;
 		double utility1 = 0, utility2 = 0;
-		System.out.println("\n-----------"+"Turn for v" + 1 + "-----------\n");
+		System.out.println("\n-----------" + "Turn for v" + 1 + "-----------\n");
 		utility1 += v1.makeOffer();
-		System.out.println("v1 utility: " + utility1 + " v2 utility: " + utility2);
+		System.out.println("\nv1 utility: " + utility1 + " v2 utility: " + utility2);
 		int turn = 2, count = 0;
 		while (++count < 15) {
-			System.out.println("\n-----------"+"Turn for v" + turn + "-----------\n");
+			System.out.println("\n-----------" + "Turn for v" + turn + "-----------\n");
 			if (turn == 1) {
 				oldUtility1 = utility1;
 				utility1 += v1.makeOffer();
