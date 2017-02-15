@@ -10,7 +10,8 @@ public class Vehicle {
 	public int numOfPeople;
 	public double lostPrivacy;
 	public double totalPrivacy;
-
+	public boolean isTurn;
+	
 	// public double vehiclePrivacy;
 	// public double emergencyPrivacy;
 	// public double malfunctionPrivacy;
@@ -108,6 +109,16 @@ public class Vehicle {
 		return minIndex;
 	}
 
+	public int getMinPrivacy(boolean isTurnBased) {
+		int minIndex = -1;
+		ArrayList<Integer> list = getEnabledIndex();
+		if (!list.isEmpty()) {
+			minIndex = list.get(0);
+			enabled[minIndex] = true;
+		}
+		return minIndex;
+	}
+	
 	public double makeOffer() {
 		int min = getMinPrivacy();
 		if (min == 0 && privacy[0] < 0.2) {
@@ -142,12 +153,16 @@ public class Vehicle {
 		return 0;
 	}
 
-	public double makeOffer(double opponentOffer) {
+	public double makeOffer(double opponentOffer,boolean isTurnBased) {
 		double newOffer = 0;
 		double offerLostPrivacy = 0;
 		int min;
 		do {
-			min = getMinPrivacy();
+			if(isTurnBased) {
+				min = getMinPrivacy(isTurnBased);
+			} else {
+				min = getMinPrivacy();
+			}
 			if (min == 0 && privacy[0] < 0.2) {
 				System.out.println("\tVehicle Type Offer\n\tprivacy = " + privacy[0] + " utility = "
 						+ Main.formatter.format(this.vehicleType.getValue() * Main.proportionVehicleType));
