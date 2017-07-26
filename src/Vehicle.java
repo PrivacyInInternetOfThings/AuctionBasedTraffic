@@ -1,43 +1,54 @@
+import java.text.DecimalFormat;
+import java.text.NumberFormat;
 import java.util.ArrayList;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Random;
 
 public class Vehicle {
 
 	public VEHICLETYPE vehicleType;
-	public EMERGENCYTYPE emergencyType;
+	public JOURNEYPURPOSE journeyType;
 	public MALFUNCTIONTYPE malfunctionType;
-	public int numOfPeople;
+	public int ageOfCar;
 	public double lostPrivacy;
 	public double totalPrivacy;
 	public boolean isTurn;
-	
+	public int id;
+	public static int lastId = 0;
 	// public double vehiclePrivacy;
-	// public double emergencyPrivacy;
+	// public double journeyPrivacy;
 	// public double malfunctionPrivacy;
 	// public double peoplePrivacy;
 	public double[] privacy = new double[4];
-
-	public boolean vehicleTypeEnabled = false;
-	public boolean emergencyTypeEnabled = false;
-	public boolean malfunctionTypeEnabled = false;
-	public boolean numOfPeopleEnabled = false;
 	public boolean[] enabled = new boolean[4];
+	
+	public static double proportionVehicleType = 0.3;
+	public static double proportionJourneyType = 0.45;
+	public static double proportionMalfunctionType = 0.1;
+	public static double proportionVehicleAge = 0.15;
 
 	public double utility;
+	
+	public static int randomSeed =100;
+	public static Random rand = new Random(randomSeed);
+	
+	public double threshold;
+	
+	public static NumberFormat nf = NumberFormat.getNumberInstance(Locale.US);
+	public static DecimalFormat df = (DecimalFormat) nf;
+	public static NumberFormat formatter = df;
 
-	public Vehicle(VEHICLETYPE vehicle, EMERGENCYTYPE emergency, MALFUNCTIONTYPE malfunction, int num) {
+	public Vehicle(VEHICLETYPE vehicle, JOURNEYPURPOSE journey, MALFUNCTIONTYPE malfunction, int age) {
 		this.vehicleType = vehicle;
-		this.emergencyType = emergency;
+		this.journeyType = journey;
 		this.malfunctionType = malfunction;
-		this.numOfPeople = num;
+		this.ageOfCar = age;
 		this.utility = 0;
 		this.lostPrivacy = 0;
-		/*
-		 * setPrivacyRandom(); for (int i = 0; i < 4; i++) {
-		 * System.out.print(privacy[i] + " "); } System.out.println();
-		 * System.out.println();
-		 */
+		this.threshold = 0.8;
+		this.id = Vehicle.lastId;
+		Vehicle.lastId++;
 	}
 
 	public void clear() {
@@ -48,12 +59,12 @@ public class Vehicle {
 		this.utility = 0;
 	}
 
-	public void setPrivacy(double vehicle, double emergency, double malfunction, double people) {
+	public void setPrivacy(double vehicle, double journey, double malfunction, double people) {
 		this.privacy[0] = vehicle;
-		this.privacy[1] = emergency;
+		this.privacy[1] = journey;
 		this.privacy[2] = malfunction;
 		this.privacy[3] = people;
-		totalPrivacy = vehicle + emergency + malfunction + people;
+		totalPrivacy = vehicle + journey + malfunction + people;
 		for (int i = 0; i < 4; i++) {
 			// this.privacy[i] /= 4;
 		}
@@ -64,20 +75,16 @@ public class Vehicle {
 	}
 
 	public void setPrivacyRandom() {
-		Random rand = new Random();
 		totalPrivacy = 0;
-
 		for (int i = 0; i < 4; i++) {
 			this.privacy[i] = rand.nextDouble();
 			privacy[i] = (int) (privacy[i] * 1000) / 1000.0;
-			totalPrivacy += this.privacy[i];
-		}
-		for (int i = 0; i < 4; i++) {
-			// this.privacy[i] /= totalPrivacy;
-			this.privacy[i] /= 4;
+			totalPrivacy += privacy[i];
 		}
 	}
-
+	public void setThreshold(double t) {
+		this.threshold = t;
+	}
 	/**
 	 * 
 	 * @return indexes of properties that are not enabled
@@ -121,33 +128,33 @@ public class Vehicle {
 	
 	public double makeOffer() {
 		int min = getMinPrivacy();
-		if (min == 0 && privacy[0] < 0.2) {
+		if (min == 0 && privacy[0] < this.threshold) {
 			System.out.println("\tVehicle Type Offer\n\tprivacy = " + privacy[0] + " utility = "
-					+ Main.formatter.format(this.vehicleType.getValue() * Main.proportionVehicleType));
+					+ formatter.format(this.vehicleType.getValue() * proportionVehicleType));
 			this.lostPrivacy += privacy[0];
-			utility += this.vehicleType.getValue() * Main.proportionVehicleType;
-			return this.vehicleType.getValue() * Main.proportionVehicleType;
+			utility += this.vehicleType.getValue() * proportionVehicleType;
+			return this.vehicleType.getValue() * proportionVehicleType;
 		}
-		if (min == 1 && privacy[1] < 0.2) {
-			System.out.println("\tEmergency Type Offer\n\tprivacy = " + privacy[1] + " utility = "
-					+ Main.formatter.format(this.emergencyType.getValue() * Main.proportionEmergencyType));
+		if (min == 1 && privacy[1] < this.threshold) {
+			System.out.println("\tJourney Type Offer\n\tprivacy = " + privacy[1] + " utility = "
+					+ formatter.format(this.journeyType.getValue() * proportionJourneyType));
 			this.lostPrivacy += privacy[1];
-			utility += this.emergencyType.getValue() * Main.proportionEmergencyType;
-			return this.emergencyType.getValue() * Main.proportionEmergencyType;
+			utility += this.journeyType.getValue() * proportionJourneyType;
+			return this.journeyType.getValue() * proportionJourneyType;
 		}
-		if (min == 2 && privacy[2] < 0.2) {
+		if (min == 2 && privacy[2] < this.threshold) {
 			System.out.println("\tMalfunction Type Offer\n\tprivacy = " + privacy[2] + " utility = "
-					+ Main.formatter.format(this.malfunctionType.getValue() * Main.proportionMalfunctionType));
+					+ formatter.format(this.malfunctionType.getValue() * proportionMalfunctionType));
 			this.lostPrivacy += privacy[2];
-			utility += this.malfunctionType.getValue() * Main.proportionMalfunctionType;
-			return this.malfunctionType.getValue() * Main.proportionMalfunctionType;
+			utility += this.malfunctionType.getValue() * proportionMalfunctionType;
+			return this.malfunctionType.getValue() * proportionMalfunctionType;
 		}
-		if (min == 3 && privacy[3] < 0.2) {
-			System.out.println("\tNumber of People Offer\n\tprivacy = " + privacy[3] + " utility = "
-					+ Main.formatter.format(this.numOfPeople / 50.0 * Main.proportionNumberPeople));
+		if (min == 3 && privacy[3] < this.threshold) {
+			System.out.println("\tAge of Vehicle Offer\n\tprivacy = " + privacy[3] + " utility = "
+					+ formatter.format(this.ageOfCar / 50.0 * proportionVehicleAge));
 			this.lostPrivacy += privacy[3];
-			utility += this.numOfPeople / 50.0 * Main.proportionNumberPeople;
-			return this.numOfPeople / 50.0 * Main.proportionNumberPeople;
+			utility += this.ageOfCar / 50.0 * proportionVehicleAge;
+			return this.ageOfCar / 50.0 * proportionVehicleAge;
 		}
 		System.out.println("\tNo Offer");
 		return 0;
@@ -163,33 +170,33 @@ public class Vehicle {
 			} else {
 				min = getMinPrivacy();
 			}
-			if (min == 0 && privacy[0] < 0.2) {
+			if (min == 0 && privacy[0] < this.threshold) {
 				System.out.println("\tVehicle Type Offer\n\tprivacy = " + privacy[0] + " utility = "
-						+ Main.formatter.format(this.vehicleType.getValue() * Main.proportionVehicleType));
+						+ formatter.format(this.vehicleType.getValue() * proportionVehicleType));
 				offerLostPrivacy += privacy[0];
-				utility += this.vehicleType.getValue() * Main.proportionVehicleType;
-				newOffer += this.vehicleType.getValue() * Main.proportionVehicleType;
+				utility += this.vehicleType.getValue() * proportionVehicleType;
+				newOffer += this.vehicleType.getValue() * proportionVehicleType;
 			}
-			if (min == 1 && privacy[1] < 0.2) {
-				System.out.println("\tEmergency Type Offer\n\tprivacy = " + privacy[1] + " utility = "
-						+ Main.formatter.format(this.emergencyType.getValue() * Main.proportionEmergencyType));
+			if (min == 1 && privacy[1] < this.threshold) {
+				System.out.println("\tJourney Type Offer\n\tprivacy = " + privacy[1] + " utility = "
+						+ formatter.format(this.journeyType.getValue() * proportionJourneyType));
 				offerLostPrivacy += privacy[1];
-				utility += this.emergencyType.getValue() * Main.proportionEmergencyType;
-				newOffer += this.emergencyType.getValue() * Main.proportionEmergencyType;
+				utility += this.journeyType.getValue() * proportionJourneyType;
+				newOffer += this.journeyType.getValue() * proportionJourneyType;
 			}
-			if (min == 2 && privacy[2] < 0.2) {
+			if (min == 2 && privacy[2] < this.threshold) {
 				System.out.println("\tMalfunction Type Offer\n\tprivacy = " + privacy[2] + " utility = "
-						+ Main.formatter.format(this.malfunctionType.getValue() * Main.proportionMalfunctionType));
+						+ formatter.format(this.malfunctionType.getValue() * proportionMalfunctionType));
 				offerLostPrivacy += privacy[2];
-				utility += this.malfunctionType.getValue() * Main.proportionMalfunctionType;
-				newOffer += this.malfunctionType.getValue() * Main.proportionMalfunctionType;
+				utility += this.malfunctionType.getValue() * proportionMalfunctionType;
+				newOffer += this.malfunctionType.getValue() * proportionMalfunctionType;
 			}
-			if (min == 3 && privacy[3] < 0.2) {
-				System.out.println("\tNumber of People Offer\n\tprivacy = " + privacy[3] + " utility = "
-						+ Main.formatter.format(this.numOfPeople / 50.0 * Main.proportionNumberPeople));
+			if (min == 3 && privacy[3] < this.threshold) {
+				System.out.println("\tAge of Vehicle Offer\n\tprivacy = " + privacy[3] + " utility = "
+						+ formatter.format(this.ageOfCar / 50.0 * proportionVehicleAge));
 				offerLostPrivacy += privacy[3];
-				utility += this.numOfPeople / 50.0 * Main.proportionNumberPeople;
-				newOffer += this.numOfPeople / 50.0 * Main.proportionNumberPeople;
+				utility += this.ageOfCar / 50.0 * proportionVehicleAge;
+				newOffer += this.ageOfCar / 50.0 * proportionVehicleAge;
 			}
 			if (min == -1) {
 				break;
@@ -197,12 +204,40 @@ public class Vehicle {
 		} while (newOffer <= opponentOffer);
 
 		if (newOffer <= opponentOffer) {
-
+			System.out.println();
+			System.out.println("\t--No Offer--");
 			return 0;
 		}
 		this.lostPrivacy += offerLostPrivacy;
 		return newOffer;
 
+	}
+	public double calculatePossibleUtilityPoints() {
+		double res = 0;
+
+		if (privacy[0] < this.threshold) {
+
+			res += this.vehicleType.getValue() * proportionVehicleType;
+		}
+		if (privacy[1] < this.threshold) {
+
+			res += this.journeyType.getValue() * proportionJourneyType;
+		}
+		if (privacy[2] < this.threshold) {
+
+			res += this.malfunctionType.getValue() * proportionMalfunctionType;
+		}
+		if (privacy[3] < this.threshold) {
+
+			res += this.ageOfCar / 50.0 * proportionVehicleAge;
+		}
+		return res;
+	}
+	
+	public String toString() {
+		return this.id + "\t" + VEHICLETYPE.abbreviation(this.vehicleType) + "\t"
+				+ JOURNEYPURPOSE.abbreviation(this.journeyType) + "\t"
+				+ MALFUNCTIONTYPE.abbreviation(this.malfunctionType) + "\t" + this.ageOfCar;
 	}
 
 }

@@ -10,4 +10,36 @@ public enum MALFUNCTIONTYPE {
 	public double getValue() {
 		return this.utilityValue;
 	}
+
+	public static String abbreviation(MALFUNCTIONTYPE m) {
+		if (m == MALFUNCTIONTYPE.WHEEL) {
+			return "WHL";
+		} else if (m == MALFUNCTIONTYPE.MOTOR) {
+			return "MTR";
+		} else if (m == MALFUNCTIONTYPE.LIGHTSANDSENSORS) {
+			return "LGT";
+		} else if (m == MALFUNCTIONTYPE.NOMALFUNCTION) {
+			return "NON";
+		}
+		return null;
+	}
+	
+	public static MALFUNCTIONTYPE getMalfunctionById(int id){
+		
+		switch (id) {
+		case 0:
+			return MALFUNCTIONTYPE.NOMALFUNCTION;
+		case 1:
+			return MALFUNCTIONTYPE.WHEEL;
+		case 2:
+			return MALFUNCTIONTYPE.MOTOR;
+		case 3:
+			return MALFUNCTIONTYPE.LIGHTSANDSENSORS;
+		default:
+			break;
+		}
+		
+		return null;
+	}
+	
 }
