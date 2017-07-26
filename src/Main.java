@@ -1,3 +1,4 @@
+import java.net.UnknownHostException;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.util.ArrayList;
@@ -8,9 +9,20 @@ public class Main {
 	public static NumberFormat nf = NumberFormat.getNumberInstance(Locale.US);
 	public static DecimalFormat df = (DecimalFormat) nf;
 	public static NumberFormat formatter = df;
+	public static DatabaseController dbController;
 
+	public static double[] thresholds = {0.8,0.5,0.3};
 	public static ArrayList<Vehicle> vehicles = new ArrayList<>();
-	public static void main(String[] args) {
+	
+	public static void main(String[] args) throws UnknownHostException {
+		
+		//dbController = new DatabaseController();
+		//ArrayList<String> accidentsIndexes = (ArrayList<String>) dbController.getAccidentIndexes();
+		//ArrayList<Vehicle> v = dbController.getVehiclesByAccidentIndex(accidentsIndexes.get(0));
+		//System.out.println(v.get(0));
+
+		
+		
 		Vehicle v1 = new Vehicle(VEHICLETYPE.CAR, JOURNEYPURPOSE.OTHER, MALFUNCTIONTYPE.NOMALFUNCTION, 1);
 		Vehicle v2 = new Vehicle(VEHICLETYPE.AMBULANCE, JOURNEYPURPOSE.PARTOFWORK, MALFUNCTIONTYPE.NOMALFUNCTION, 4);
 		Vehicle v3 = new Vehicle(VEHICLETYPE.CAR, JOURNEYPURPOSE.OTHER, MALFUNCTIONTYPE.WHEEL, 3);
@@ -31,6 +43,10 @@ public class Main {
 		vehicles.add(v5);
 		for (int i = 0; i < vehicles.size(); i++) {
 			for (int j = i + 1; j < vehicles.size(); j++) {
+				for(int k=0; k<3;k++) {
+					vehicles.get(i).setThreshold(thresholds[k]);
+					vehicles.get(j).setThreshold(thresholds[k]);
+					System.out.println("Threshold: "+ thresholds[k] + " ____________________________________________________");
 					System.out.println("Auction Based -------------------------------------------------------------");
 					startAndResult(i, j,false);
 					vehicles.get(i).clear();
@@ -47,6 +63,9 @@ public class Main {
 					startAndResult(i, j,true);
 					vehicles.get(i).clear();
 					vehicles.get(j).clear();
+				}
+				vehicles.get(i).setThreshold(thresholds[0]);
+				vehicles.get(j).setThreshold(thresholds[0]);
 			}
 		}
 		System.out.println();

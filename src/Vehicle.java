@@ -29,7 +29,7 @@ public class Vehicle {
 	public static double proportionVehicleAge = 0.15;
 
 	public double utility;
-	
+	public int reference = 0;
 	public static int randomSeed =100;
 	public static Random rand = new Random(randomSeed);
 	
@@ -81,6 +81,9 @@ public class Vehicle {
 			privacy[i] = (int) (privacy[i] * 1000) / 1000.0;
 			totalPrivacy += privacy[i];
 		}
+	}
+	public void setReference(int ref){
+		this.reference = ref;
 	}
 	public void setThreshold(double t) {
 		this.threshold = t;
