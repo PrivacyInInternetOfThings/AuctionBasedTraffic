@@ -130,7 +130,12 @@ public class Vehicle {
 	}
 	
 	public double makeOffer() {
-		int min = getMinPrivacy();
+		int min;
+		if(isTurn) {
+			min = getMinPrivacy(isTurn);
+		} else {
+			min = getMinPrivacy();
+		}
 		if (min == 0 && privacy[0] < this.threshold) {
 			System.out.println("\tVehicle Type Offer\n\tprivacy = " + privacy[0] + " utility = "
 					+ formatter.format(this.vehicleType.getValue() * proportionVehicleType));
@@ -163,16 +168,12 @@ public class Vehicle {
 		return 0;
 	}
 
-	public double makeOffer(double opponentOffer,boolean isTurnBased) {
+	public double makeOffer(double opponentOffer) {
 		double newOffer = 0;
 		double offerLostPrivacy = 0;
 		int min;
 		do {
-			if(isTurnBased) {
-				min = getMinPrivacy(isTurnBased);
-			} else {
-				min = getMinPrivacy();
-			}
+			min = getMinPrivacy();
 			if (min == 0 && privacy[0] < this.threshold) {
 				System.out.println("\tVehicle Type Offer\n\tprivacy = " + privacy[0] + " utility = "
 						+ formatter.format(this.vehicleType.getValue() * proportionVehicleType));

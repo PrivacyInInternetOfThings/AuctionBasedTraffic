@@ -47,22 +47,31 @@ public class Main {
 					vehicles.get(i).setThreshold(thresholds[k]);
 					vehicles.get(j).setThreshold(thresholds[k]);
 					System.out.println("Threshold: "+ thresholds[k] + " ____________________________________________________");
-					System.out.println("Auction Based -------------------------------------------------------------");
-					startAndResult(i, j,false);
+			
+					System.out.println("Basic ---------------------------------------------------------------------");
+					startAndResult(i, j, 1);
 					vehicles.get(i).clear();
 					vehicles.get(j).clear();
+				
 					vehicles.get(i).isTurn = true;
 					vehicles.get(j).isTurn = true;
 					System.out.println("Turn Based ----------------------------------------------------------------");
-					startAndResult(i, j,false);
+					startAndResult(i, j, 2);
 					vehicles.get(i).clear();
 					vehicles.get(j).clear();
 					vehicles.get(i).isTurn = false;
 					vehicles.get(j).isTurn = false;
-					System.out.println("Basic ---------------------------------------------------------------------");
-					startAndResult(i, j,true);
+				
+					System.out.println("Auction Based -------------------------------------------------------------");
+					startAndResult(i, j, 3);
 					vehicles.get(i).clear();
 					vehicles.get(j).clear();
+				
+					System.out.println("Modified Auction Based -------------------------------------------------------------");
+					startAndResult(i, j, 4);
+					vehicles.get(i).clear();
+					vehicles.get(j).clear();
+					
 				}
 				vehicles.get(i).setThreshold(thresholds[0]);
 				vehicles.get(j).setThreshold(thresholds[0]);
@@ -71,13 +80,17 @@ public class Main {
 		System.out.println();
 	}
 	
-	public static void startAndResult(int index1, int index2, boolean isBasic) {
+	public static void startAndResult(int index1, int index2, int commType) {
 		System.out.println("v1 = Vehicle " + (index1 + 1) + " v2 = Vehicle " + (index2 + 1));
 		int result;
-		if(isBasic) {
+		if(commType == 1) {
 			result = basicNegotiation(vehicles.get(index1), vehicles.get(index2));
+		} else if(commType == 2) {
+			result = turnBaseNegotiation(vehicles.get(index1), vehicles.get(index2));
+		} else if(commType == 3) {
+			result = auctionNegotiation(vehicles.get(index1), vehicles.get(index2));
 		} else {
-			result = makeNegotiation(vehicles.get(index1), vehicles.get(index2));
+			result = modifiedNegotiation(vehicles.get(index1), vehicles.get(index2));
 		}
 		System.out.println("---------------------------------");
 		if (result == 1) {
@@ -96,7 +109,7 @@ public class Main {
 		
 	}
 
-	public static int makeNegotiation(Vehicle v1, Vehicle v2) {
+	public static int modifiedNegotiation(Vehicle v1, Vehicle v2) {
 		// Auction
 		double oldUtility1 = 0, oldUtility2 = 0;
 		double utility1 = 0, utility2 = 0;
@@ -108,7 +121,7 @@ public class Main {
 			System.out.println("\n-----------" + "Turn for v" + turn + "-----------\n");
 			if (turn == 1) {
 				oldUtility1 = utility1;
-				utility1 += v1.makeOffer(utility2,v1.isTurn);
+				utility1 += v1.makeOffer(utility2);
 				System.out.println("\nv1 utility: " + utility1 + " v2 utility: " + utility2);
 
 				if (utility1 - oldUtility1 < 0.00001) {
@@ -117,12 +130,11 @@ public class Main {
 				turn = 2;
 			} else {
 				oldUtility2 = utility2;
-				utility2 += v2.makeOffer(utility1,v2.isTurn);
+				utility2 += v2.makeOffer(utility1);
 				System.out.println("\nv1 utility: " + utility1 + " v2 utility: " + utility2);
 				if (utility2 - oldUtility2 < 0.00001) {
 					break;
 				}
-
 				turn = 1;
 			}
 		}
@@ -133,25 +145,83 @@ public class Main {
 		}
 	}
 	
+	public static int auctionNegotiation(Vehicle v1, Vehicle v2) {
+		// Auction
+		double oldUtility1 = 0, oldUtility2 = 0;
+		double utility1 = 0, utility2 = 0;
+		System.out.println("\n-----------" + "Turn for v" + 1 + "-----------\n");
+		utility1 += v1.makeOffer();
+		System.out.println("\nv1 utility: " + utility1 + " v2 utility: " + utility2);
+		int turn = 2, count = 0;
+		while (++count < 25) {
+			System.out.println("\n-----------" + "Turn for v" + turn + "-----------\n");
+			if (turn == 1) {
+				oldUtility1 = utility1;
+				utility1 += v1.makeOffer();
+				System.out.println("\nv1 utility: " + utility1 + " v2 utility: " + utility2);
+
+				if (utility1 - oldUtility1 < 0.00001) {
+					break;
+				}
+				turn = 2;
+			} else {
+				oldUtility2 = utility2;
+				utility2 += v2.makeOffer();
+				System.out.println("\nv1 utility: " + utility1 + " v2 utility: " + utility2);
+				if (utility2 - oldUtility2 < 0.00001) {
+					break;
+				}
+				turn = 1;
+			}
+		}
+		if (utility1 >= utility2) {
+			return 1;
+		} else {
+			return 2;
+		}
+	}
+	
+	public static int turnBaseNegotiation(Vehicle v1, Vehicle v2) {
+		// turn based negotiation
+		double utility1 = 0, utility2 = 0;
+		String[] turnType = {"\n--------Vehicle Type Turn--------\n",
+				"\n-------Journey Type Turn-------\n",
+				"\n------Malfunction Type Turn------\n",
+				"\n-------Number of People Turn-------\n"};
+		for (int i = 0; i < 4; i++) {
+			System.out.println(turnType[i]);
+			System.out.println("\tOffer of v" + 1);
+			System.out.println("\t-----------");
+			utility1 += v1.makeOffer();
+			System.out.println("\n\tOffer of v" + 2);
+			System.out.println("\t-----------");
+			utility2 += v2.makeOffer();
+			System.out.println("\nv1 utility: " + utility1 + " v2 utility: " + utility2);
+			if (utility1 > utility2) {
+				return 1;
+			} else if (utility1 < utility2) {
+				return 2;
+			}
+		}
+		return 1;
+	}
+	
 	public static int basicNegotiation(Vehicle v1, Vehicle v2) {
 		// Basic Communication
 		double utility1 = 0, utility2 = 0;
 		System.out.println("\n\tOffers of v" + 1);
 		System.out.println("\t------------");
-		utility1 += v1.makeOffer();
-		utility1 += v1.makeOffer();
-		utility1 += v1.makeOffer();
-		utility1 += v1.makeOffer();
+		for (int i = 0; i < 4; i++) {
+			utility1 += v1.makeOffer();	
+		}
 		if(utility1 == 0) System.out.println("\tNo Offer");
 		System.out.println("\n\tOffers of v" + 2);
 		System.out.println("\t------------");
-		utility2 += v2.makeOffer();
-		utility2 += v2.makeOffer();
-		utility2 += v2.makeOffer();
-		utility2 += v2.makeOffer();
+		for (int i = 0; i < 4; i++) {
+			utility2 += v2.makeOffer();	
+		}
 		if(utility2 == 0) System.out.println("\tNo Offer");
 		System.out.println("\nv1 utility: " + formatter.format(utility1) + " v2 utility: " + formatter.format(utility2));
-
 		if (utility1 >= utility2) {
 			return 1;
 		} else {
