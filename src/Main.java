@@ -63,7 +63,9 @@ public class Main {
 			}
 			System.out.println(thres.toString());
 			System.out.println();
-			//TODO add thres JSONOBject to Database
+			JSONObject accident = new JSONObject();
+			accident.put(accidentsIndexes.get(i), thres);
+			//TODO add accident JSONOBject to Database
 			vehicles.get(0).setThreshold(thresholds[0]);
 			vehicles.get(1).setThreshold(thresholds[0]);
 		}
