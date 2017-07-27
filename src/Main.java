@@ -16,31 +16,31 @@ public class Main {
 	
 	public static void main(String[] args) throws UnknownHostException {
 		
-		//dbController = new DatabaseController();
-		//ArrayList<String> accidentsIndexes = (ArrayList<String>) dbController.getAccidentIndexes();
-		//ArrayList<Vehicle> v = dbController.getVehiclesByAccidentIndex(accidentsIndexes.get(0));
-		//System.out.println(v.get(0));
+		dbController = new DatabaseController();
+		ArrayList<String> accidentsIndexes = (ArrayList<String>) dbController.getAccidentIndexes();
+		ArrayList<Vehicle> v = dbController.getVehiclesByAccidentIndex(accidentsIndexes.get(0));
+		System.out.println(v.get(0));
 
 		
 		
-		Vehicle v1 = new Vehicle(VEHICLETYPE.CAR, JOURNEYPURPOSE.OTHER, MALFUNCTIONTYPE.NOMALFUNCTION, 1);
-		Vehicle v2 = new Vehicle(VEHICLETYPE.AMBULANCE, JOURNEYPURPOSE.PARTOFWORK, MALFUNCTIONTYPE.NOMALFUNCTION, 4);
-		Vehicle v3 = new Vehicle(VEHICLETYPE.CAR, JOURNEYPURPOSE.OTHER, MALFUNCTIONTYPE.WHEEL, 3);
-		Vehicle v4 = new Vehicle(VEHICLETYPE.CAR, JOURNEYPURPOSE.COMMUTINGTOWORK, MALFUNCTIONTYPE.NOMALFUNCTION, 1);
-		Vehicle v5 = new Vehicle(VEHICLETYPE.CAR, JOURNEYPURPOSE.SCHOOL, MALFUNCTIONTYPE.NOMALFUNCTION, 14);
+//		Vehicle v1 = new Vehicle(VEHICLETYPE.CAR, JOURNEYPURPOSE.OTHER, MALFUNCTIONTYPE.NOMALFUNCTION, 1);
+//		Vehicle v2 = new Vehicle(VEHICLETYPE.AMBULANCE, JOURNEYPURPOSE.PARTOFWORK, MALFUNCTIONTYPE.NOMALFUNCTION, 4);
+//		Vehicle v3 = new Vehicle(VEHICLETYPE.CAR, JOURNEYPURPOSE.OTHER, MALFUNCTIONTYPE.WHEEL, 3);
+//		Vehicle v4 = new Vehicle(VEHICLETYPE.CAR, JOURNEYPURPOSE.COMMUTINGTOWORK, MALFUNCTIONTYPE.NOMALFUNCTION, 1);
+//		Vehicle v5 = new Vehicle(VEHICLETYPE.CAR, JOURNEYPURPOSE.SCHOOL, MALFUNCTIONTYPE.NOMALFUNCTION, 14);
 
-		v1.setPrivacy(0.0445, 0.115, 0.01575, 0.1755);
-		v2.setPrivacy(0.1875, 0.243, 0.029, 0.174);
-		v3.setPrivacy(0.25, 0.25, 0.25, 0.25);
-		v4.setPrivacy(0.094, 0.19, 0.18, 0.17);
-		v5.setPrivacy(0.171, 0.066, 0.22, 0.174);
-		
-		
-		vehicles.add(v1);
-		vehicles.add(v2);
-		vehicles.add(v3);
-		vehicles.add(v4);
-		vehicles.add(v5);
+//		v1.setPrivacy(0.0445, 0.115, 0.01575, 0.1755);
+//		v2.setPrivacy(0.1875, 0.243, 0.029, 0.174);
+//		v3.setPrivacy(0.25, 0.25, 0.25, 0.25);
+//		v4.setPrivacy(0.094, 0.19, 0.18, 0.17);
+//		v5.setPrivacy(0.171, 0.066, 0.22, 0.174);
+//		
+//		
+//		vehicles.add(v1);
+//		vehicles.add(v2);
+//		vehicles.add(v3);
+//		vehicles.add(v4);
+//		vehicles.add(v5);
 		for (int i = 0; i < vehicles.size(); i++) {
 			for (int j = i + 1; j < vehicles.size(); j++) {
 				for(int k=0; k<3;k++) {

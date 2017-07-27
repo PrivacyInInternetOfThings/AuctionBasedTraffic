@@ -1,23 +1,15 @@
 import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 
-import org.bson.Document;
-
-import com.mongodb.AggregationOutput;
 import com.mongodb.BasicDBObject;
-import com.mongodb.BasicDBObjectBuilder;
 import com.mongodb.DB;
 import com.mongodb.DBCollection;
 import com.mongodb.DBCursor;
 import com.mongodb.DBObject;
 import com.mongodb.MongoClient;
-import com.mongodb.client.model.Aggregates;
 
 public class DatabaseController {
 
@@ -43,17 +35,17 @@ public class DatabaseController {
 
 		DBObject group = new BasicDBObject("$group",
 				new BasicDBObject("_id", "$Accident_Index").append("count", new BasicDBObject("$sum", 1)));
-		DBObject match = new BasicDBObject("$match", new BasicDBObject("count", new BasicDBObject("$gt", 1)));
-		DBObject sort = new BasicDBObject("$sort", new BasicDBObject("count", -1));
-		Iterable<DBObject> o = accidentCollection.aggregate(Arrays.asList(group, match, sort)).results();
+		DBObject match = new BasicDBObject("$match", new BasicDBObject("count", 2));
+		//DBObject sort = new BasicDBObject("$sort", new BasicDBObject("count", -1));
+		Iterable<DBObject> o = accidentCollection.aggregate(Arrays.asList(group, match /*, sort*/)).results();
 
 		for (DBObject dbo : o) {
 
 //			System.out.println("Accident Index: " + dbo.get("_id").toString() + ", Number Of Vehicles: "
 //					+ dbo.get("count").toString());
-			result.add("Accident Index: " + dbo.get("_id").toString() + ", Number Of Vehicles: "
-					+ dbo.get("count").toString());
-
+//			result.add("Accident Index: " + dbo.get("_id").toString() + ", Number Of Vehicles: "
+//					+ dbo.get("count").toString());
+			result.add(dbo.get("_id").toString());
 		}
 
 		return result;
@@ -64,13 +56,27 @@ public class DatabaseController {
 //		Map<String,Integer> m = getThresholdVariables(accidentIndex);
 		
 		DBCollection vehiclesCollection = trafficDatabase.getCollection(vehiclesCollectionName);
-		DBCursor c = vehiclesCollection.find(new BasicDBObject("Accident_Index",accidentIndex),new BasicDBObject("Accident_Index",1).append("Vehicle_Reference",1).append("Age_of_Driver",1).append("Engine_Capacity_(CC)",1).append("Vehicle_Reference", 1).append("_id", 0).append("Vehicle_Type", 1).append("Journey_Purpose_of_Driver", 1).append("Age_of_Vehicle", 1));
+		DBCursor c = vehiclesCollection.find(
+				new BasicDBObject("Accident_Index",accidentIndex),
+				new BasicDBObject("Accident_Index",1)
+					.append("Vehicle_Reference",1)
+					.append("Age_of_Driver",1)
+					.append("Engine_Capacity_(CC)",1)
+					.append("Vehicle_Reference", 1)
+					.append("_id", 0)
+					.append("Vehicle_Type", 1)
+					.append("Journey_Purpose_of_Driver", 1)
+					.append("Age_of_Vehicle", 1)
+					.append("Age_of_Driver", 1)
+					.append("Age_Band_of_Driver", 1));
 		while(c.hasNext()){
 			BasicDBObject o = (BasicDBObject) c.next();
+			System.out.println(o.getString("Accident_Index"));
 			Vehicle v = new Vehicle(
 					VEHICLETYPE.getById(o.getInt("Vehicle_Type")), 
 					JOURNEYPURPOSE.getJourneyPurposeById(o.getInt("Journey_Purpose_of_Driver")), 
-					MALFUNCTIONTYPE.getMalfunctionById((int)Math.random()*3), 
+//					MALFUNCTIONTYPE.getMalfunctionById((int)Math.random()*3),
+					(o.getInt("Age_Band_of_Driver") == -1 ? 0 :  o.getInt("Age_Band_of_Driver")),
 					(o.getInt("Age_of_Vehicle") == -1 ? 50 :  o.getInt("Age_of_Vehicle")));
 			v.setReference(o.getInt("Vehicle_Reference"));
 			//v.setThreshold(m.get("Day_of_Week"), m.get("Time"), m.get("Urban_or_Rural_Area"), m.get("Weather_Conditions"), m.get("Road_Surface_Conditions"), m.get("Special_Conditions_at_Site"), m.get("Light_Conditions"), o.getInt("Age_of_Driver"), o.getInt("Engine_Capacity_(CC)"));

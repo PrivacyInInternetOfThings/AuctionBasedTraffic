@@ -11,6 +11,7 @@ public class Vehicle {
 	public JOURNEYPURPOSE journeyType;
 	public MALFUNCTIONTYPE malfunctionType;
 	public int ageOfCar;
+	public int ageBandOfDriver;
 	public double lostPrivacy;
 	public double totalPrivacy;
 	public boolean isTurn;
@@ -39,11 +40,18 @@ public class Vehicle {
 	public static DecimalFormat df = (DecimalFormat) nf;
 	public static NumberFormat formatter = df;
 
-	public Vehicle(VEHICLETYPE vehicle, JOURNEYPURPOSE journey, MALFUNCTIONTYPE malfunction, int age) {
+	public Vehicle(
+			VEHICLETYPE vehicle, 
+			JOURNEYPURPOSE journey, 
+//			MALFUNCTIONTYPE malfunction,
+			int ageBandOfDriver,
+			int ageOfCar
+			) {
 		this.vehicleType = vehicle;
 		this.journeyType = journey;
-		this.malfunctionType = malfunction;
-		this.ageOfCar = age;
+//		this.malfunctionType = malfunction;
+		this.ageBandOfDriver = ageBandOfDriver;
+		this.ageOfCar = ageOfCar;
 		this.utility = 0;
 		this.lostPrivacy = 0;
 		this.threshold = 0.8;
@@ -59,7 +67,11 @@ public class Vehicle {
 		this.utility = 0;
 	}
 
-	public void setPrivacy(double vehicle, double journey, double malfunction, double people) {
+	public void setPrivacy(
+			double vehicle, 
+			double journey, 
+			double malfunction, 
+			double people) {
 		this.privacy[0] = vehicle;
 		this.privacy[1] = journey;
 		this.privacy[2] = malfunction;
