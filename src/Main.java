@@ -18,64 +18,45 @@ public class Main {
 		
 		dbController = new DatabaseController();
 		ArrayList<String> accidentsIndexes = (ArrayList<String>) dbController.getAccidentIndexes();
-		ArrayList<Vehicle> v = dbController.getVehiclesByAccidentIndex(accidentsIndexes.get(0));
-		System.out.println(v.get(0));
 
+		for (int i = 0; i < 2/*accidentsIndexes.size()*/; i++) {
+			vehicles = dbController.getVehiclesByAccidentIndex(accidentsIndexes.get(i));
+			vehicles.get(0).setPrivacyRandom();
+			vehicles.get(1).setPrivacyRandom();
+			System.out.println(vehicles.get(0));
+			System.out.println(vehicles.get(1));
+			for(int k=0; k<3;k++) {
+				vehicles.get(0).setThreshold(thresholds[k]);
+				vehicles.get(1).setThreshold(thresholds[k]);
+				System.out.println("Threshold: "+ thresholds[k] + " ____________________________________________________");
 		
-		
-//		Vehicle v1 = new Vehicle(VEHICLETYPE.CAR, JOURNEYPURPOSE.OTHER, MALFUNCTIONTYPE.NOMALFUNCTION, 1);
-//		Vehicle v2 = new Vehicle(VEHICLETYPE.AMBULANCE, JOURNEYPURPOSE.PARTOFWORK, MALFUNCTIONTYPE.NOMALFUNCTION, 4);
-//		Vehicle v3 = new Vehicle(VEHICLETYPE.CAR, JOURNEYPURPOSE.OTHER, MALFUNCTIONTYPE.WHEEL, 3);
-//		Vehicle v4 = new Vehicle(VEHICLETYPE.CAR, JOURNEYPURPOSE.COMMUTINGTOWORK, MALFUNCTIONTYPE.NOMALFUNCTION, 1);
-//		Vehicle v5 = new Vehicle(VEHICLETYPE.CAR, JOURNEYPURPOSE.SCHOOL, MALFUNCTIONTYPE.NOMALFUNCTION, 14);
-
-//		v1.setPrivacy(0.0445, 0.115, 0.01575, 0.1755);
-//		v2.setPrivacy(0.1875, 0.243, 0.029, 0.174);
-//		v3.setPrivacy(0.25, 0.25, 0.25, 0.25);
-//		v4.setPrivacy(0.094, 0.19, 0.18, 0.17);
-//		v5.setPrivacy(0.171, 0.066, 0.22, 0.174);
-//		
-//		
-//		vehicles.add(v1);
-//		vehicles.add(v2);
-//		vehicles.add(v3);
-//		vehicles.add(v4);
-//		vehicles.add(v5);
-		for (int i = 0; i < vehicles.size(); i++) {
-			for (int j = i + 1; j < vehicles.size(); j++) {
-				for(int k=0; k<3;k++) {
-					vehicles.get(i).setThreshold(thresholds[k]);
-					vehicles.get(j).setThreshold(thresholds[k]);
-					System.out.println("Threshold: "+ thresholds[k] + " ____________________________________________________");
+				System.out.println("Basic ---------------------------------------------------------------------");
+				startAndResult(0, 1, 1);
+				vehicles.get(0).clear();
+				vehicles.get(1).clear();
 			
-					System.out.println("Basic ---------------------------------------------------------------------");
-					startAndResult(i, j, 1);
-					vehicles.get(i).clear();
-					vehicles.get(j).clear();
+				vehicles.get(0).isTurn = true;
+				vehicles.get(1).isTurn = true;
+				System.out.println("Turn Based ----------------------------------------------------------------");
+				startAndResult(0, 1, 2);
+				vehicles.get(0).clear();
+				vehicles.get(1).clear();
+				vehicles.get(0).isTurn = false;
+				vehicles.get(1).isTurn = false;
+			
+				System.out.println("Auction Based -------------------------------------------------------------");
+				startAndResult(0, 1, 3);
+				vehicles.get(0).clear();
+				vehicles.get(1).clear();
+			
+				System.out.println("Modified Auction Based -------------------------------------------------------------");
+				startAndResult(0, 1, 4);
+				vehicles.get(0).clear();
+				vehicles.get(1).clear();
 				
-					vehicles.get(i).isTurn = true;
-					vehicles.get(j).isTurn = true;
-					System.out.println("Turn Based ----------------------------------------------------------------");
-					startAndResult(i, j, 2);
-					vehicles.get(i).clear();
-					vehicles.get(j).clear();
-					vehicles.get(i).isTurn = false;
-					vehicles.get(j).isTurn = false;
-				
-					System.out.println("Auction Based -------------------------------------------------------------");
-					startAndResult(i, j, 3);
-					vehicles.get(i).clear();
-					vehicles.get(j).clear();
-				
-					System.out.println("Modified Auction Based -------------------------------------------------------------");
-					startAndResult(i, j, 4);
-					vehicles.get(i).clear();
-					vehicles.get(j).clear();
-					
-				}
-				vehicles.get(i).setThreshold(thresholds[0]);
-				vehicles.get(j).setThreshold(thresholds[0]);
 			}
+			vehicles.get(0).setThreshold(thresholds[0]);
+			vehicles.get(1).setThreshold(thresholds[0]);
 		}
 		System.out.println();
 	}
@@ -144,7 +125,7 @@ public class Main {
 			return 2;
 		}
 	}
-	
+
 	public static int auctionNegotiation(Vehicle v1, Vehicle v2) {
 		// Auction
 		double oldUtility1 = 0, oldUtility2 = 0;
@@ -159,19 +140,22 @@ public class Main {
 				oldUtility1 = utility1;
 				utility1 += v1.makeOffer();
 				System.out.println("\nv1 utility: " + utility1 + " v2 utility: " + utility2);
-
+				if(utility1 - utility2>0.0001) {
+					turn = 2;
+				}
 				if (utility1 - oldUtility1 < 0.00001) {
 					break;
 				}
-				turn = 2;
 			} else {
 				oldUtility2 = utility2;
 				utility2 += v2.makeOffer();
 				System.out.println("\nv1 utility: " + utility1 + " v2 utility: " + utility2);
+				if(utility2 - utility1>0.0001) {
+					turn = 1;
+				}
 				if (utility2 - oldUtility2 < 0.00001) {
 					break;
 				}
-				turn = 1;
 			}
 		}
 		if (utility1 >= utility2) {
@@ -186,8 +170,8 @@ public class Main {
 		double utility1 = 0, utility2 = 0;
 		String[] turnType = {"\n--------Vehicle Type Turn--------\n",
 				"\n-------Journey Type Turn-------\n",
-				"\n------Malfunction Type Turn------\n",
-				"\n-------Number of People Turn-------\n"};
+				"\n------Age Band of Driver Turn------\n",
+				"\n-------Age of Vehicle Turn-------\n"};
 		for (int i = 0; i < 4; i++) {
 			System.out.println(turnType[i]);
 			System.out.println("\tOffer of v" + 1);

@@ -24,10 +24,10 @@ public class Vehicle {
 	public double[] privacy = new double[4];
 	public boolean[] enabled = new boolean[4];
 	
-	public static double proportionVehicleType = 0.3;
-	public static double proportionJourneyType = 0.45;
-	public static double proportionMalfunctionType = 0.1;
-	public static double proportionVehicleAge = 0.15;
+	public static double proportionVehicleType = 0.25;
+	public static double proportionJourneyType = 0.25;
+	public static double proportionAgeBand = 0.25;
+	public static double proportionVehicleAge = 0.25;
 
 	public double utility;
 	public int reference = 0;
@@ -163,11 +163,11 @@ public class Vehicle {
 			return this.journeyType.getValue() * proportionJourneyType;
 		}
 		if (min == 2 && privacy[2] < this.threshold) {
-			System.out.println("\tMalfunction Type Offer\n\tprivacy = " + privacy[2] + " utility = "
-					+ formatter.format(this.malfunctionType.getValue() * proportionMalfunctionType));
+			System.out.println("\tAge Band of Driver Offer\n\tprivacy = " + privacy[2] + " utility = "
+					+ formatter.format(this.ageBandOfDriver / 20.0 * proportionAgeBand));
 			this.lostPrivacy += privacy[2];
-			utility += this.malfunctionType.getValue() * proportionMalfunctionType;
-			return this.malfunctionType.getValue() * proportionMalfunctionType;
+			utility += this.ageBandOfDriver / 20.0 * proportionAgeBand;
+			return this.ageBandOfDriver / 20.0 * proportionAgeBand;
 		}
 		if (min == 3 && privacy[3] < this.threshold) {
 			System.out.println("\tAge of Vehicle Offer\n\tprivacy = " + privacy[3] + " utility = "
@@ -201,11 +201,11 @@ public class Vehicle {
 				newOffer += this.journeyType.getValue() * proportionJourneyType;
 			}
 			if (min == 2 && privacy[2] < this.threshold) {
-				System.out.println("\tMalfunction Type Offer\n\tprivacy = " + privacy[2] + " utility = "
-						+ formatter.format(this.malfunctionType.getValue() * proportionMalfunctionType));
+				System.out.println("\tAge Band of Driver Offer\n\tprivacy = " + privacy[2] + " utility = "
+						+ formatter.format(this.ageBandOfDriver / 20.0 * proportionAgeBand));
 				offerLostPrivacy += privacy[2];
-				utility += this.malfunctionType.getValue() * proportionMalfunctionType;
-				newOffer += this.malfunctionType.getValue() * proportionMalfunctionType;
+				utility += this.ageBandOfDriver / 20.0 * proportionAgeBand;
+				newOffer += this.ageBandOfDriver / 20.0 * proportionAgeBand;
 			}
 			if (min == 3 && privacy[3] < this.threshold) {
 				System.out.println("\tAge of Vehicle Offer\n\tprivacy = " + privacy[3] + " utility = "
@@ -241,7 +241,7 @@ public class Vehicle {
 		}
 		if (privacy[2] < this.threshold) {
 
-			res += this.malfunctionType.getValue() * proportionMalfunctionType;
+			res += this.ageBandOfDriver * proportionAgeBand;
 		}
 		if (privacy[3] < this.threshold) {
 
@@ -253,7 +253,7 @@ public class Vehicle {
 	public String toString() {
 		return this.id + "\t" + VEHICLETYPE.abbreviation(this.vehicleType) + "\t"
 				+ JOURNEYPURPOSE.abbreviation(this.journeyType) + "\t"
-				+ MALFUNCTIONTYPE.abbreviation(this.malfunctionType) + "\t" + this.ageOfCar;
+				+ this.ageBandOfDriver + "\t" + this.ageOfCar;
 	}
 
 }

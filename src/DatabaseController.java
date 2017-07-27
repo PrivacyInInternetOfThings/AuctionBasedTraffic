@@ -71,7 +71,7 @@ public class DatabaseController {
 					.append("Age_Band_of_Driver", 1));
 		while(c.hasNext()){
 			BasicDBObject o = (BasicDBObject) c.next();
-			System.out.println(o.getString("Accident_Index"));
+			//System.out.println(o.getString("Accident_Index"));
 			Vehicle v = new Vehicle(
 					VEHICLETYPE.getById(o.getInt("Vehicle_Type")), 
 					JOURNEYPURPOSE.getJourneyPurposeById(o.getInt("Journey_Purpose_of_Driver")), 
