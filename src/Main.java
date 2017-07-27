@@ -1,3 +1,6 @@
+import java.io.FileNotFoundException;
+import java.io.PrintWriter;
+import java.io.UnsupportedEncodingException;
 import java.net.UnknownHostException;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
@@ -15,9 +18,17 @@ public class Main {
 
 	public static double[] thresholds = {0.8,0.5,0.3};
 	public static ArrayList<Vehicle> vehicles = new ArrayList<>();
-	
-	public static void main(String[] args) throws UnknownHostException {
-		
+	public static ArrayList<String> v1;
+	public static ArrayList<String> v2;
+	public static ArrayList<String> header = new ArrayList<>();
+	public static void main(String[] args) throws UnknownHostException, FileNotFoundException, UnsupportedEncodingException {
+		PrintWriter writer = new PrintWriter("name.csv", "UTF-8");
+		initHeader();
+		String formattedString = header.toString()
+			    .replace("[", "")  //remove the right bracket
+			    .replace("]", "")  //remove the left bracket
+			    .trim();
+		writer.println(formattedString);
 		dbController = new DatabaseController();
 		ArrayList<String> accidentsIndexes = (ArrayList<String>) dbController.getAccidentIndexes();
 		System.out.println(accidentsIndexes.size());
@@ -29,6 +40,12 @@ public class Main {
 			System.out.println(vehicles.get(0));
 			System.out.println(vehicles.get(1));
 			JSONObject thres = new JSONObject();
+			v1 = new ArrayList<>();
+			v2 = new ArrayList<>();
+			v1.add(accidentsIndexes.get(i));
+			v2.add(accidentsIndexes.get(i));
+			v1.add("v1");
+			v2.add("v2");
 			for(int k=0; k<3;k++) {
 				JSONObject type = new JSONObject();
 				vehicles.get(0).setThreshold(thresholds[k]);
@@ -62,6 +79,18 @@ public class Main {
 				thres.put(""+thresholds[k], type);
 			}
 			System.out.println(thres.toString());
+			System.out.println(v1.toString());
+			System.out.println(v2.toString());
+			formattedString = v1.toString()
+				    .replace("[", "")  //remove the right bracket
+				    .replace("]", "")  //remove the left bracket
+				    .trim();
+			writer.println(formattedString);
+			formattedString = v2.toString()
+				    .replace("[", "")  //remove the right bracket
+				    .replace("]", "")  //remove the left bracket
+				    .trim();
+			writer.println(formattedString);
 			System.out.println();
 			JSONObject accident = new JSONObject();
 			accident.put(accidentsIndexes.get(i), thres);
@@ -70,8 +99,25 @@ public class Main {
 			vehicles.get(1).setThreshold(thresholds[0]);
 		}
 		System.out.println();
+		writer.close();
 	}
 	
+	private static void initHeader() {
+		header.add("Accident Index");
+		header.add("Vehicles");
+		for (int i = 0; i < thresholds.length; i++) {
+			header.add("Basic Method Privacy Loss - " + thresholds[i]);
+			header.add("Basic Method Winner - " + thresholds[i]);
+			header.add("Turn Based Privacy Loss - " + thresholds[i]);
+			header.add("Turn Based Winner - " + thresholds[i]);
+			header.add("Auction Method Privacy Loss - " + thresholds[i]);
+			header.add("Auction Method Winner - " + thresholds[i]);
+			header.add("Modified Auction Method Privacy Loss - " + thresholds[i]);
+			header.add("Modified Auction Method Winner - " + thresholds[i]);
+		}
+
+	}
+
 	public static JSONObject startAndResult(int index1, int index2, int commType) {
 		System.out.println("v1 = Vehicle " + (index1 + 1) + " v2 = Vehicle " + (index2 + 1));
 		int result;
@@ -102,24 +148,16 @@ public class Main {
 		JSONObject item = new JSONObject();
 		item.put("Privacy Loss of Vehicle 1", "" + formatter.format(100*vehicles.get(index1).lostPrivacy / vehicles.get(index1).totalPrivacy) + "%");
 		item.put("Privacy Loss of Vehicle 2", "" + formatter.format(100*vehicles.get(index2).lostPrivacy / vehicles.get(index2).totalPrivacy) + "%");
+		v1.add("" + formatter.format(100*vehicles.get(index1).lostPrivacy / vehicles.get(index1).totalPrivacy) + "%");
+		v2.add("" + formatter.format(100*vehicles.get(index2).lostPrivacy / vehicles.get(index2).totalPrivacy) + "%");
+		if (result == 1) {
+			v1.add("W");
+			v2.add("L");
+		} else {
+			v1.add("L");
+			v2.add("W");
+		}
 		return item;
-		/*
-		String message;
-		JSONObject json = new JSONObject();
-		json.put("name", "student");
-		
-		JSONArray array = new JSONArray();
-		JSONObject item = new JSONObject();
-		item.put("information", "test");
-		item.put("id", 3);
-		item.put("name", "course1");
-		array.put(item);
-		
-		json.put("course", array);
-		
-		message = json.toString();
-		*/
-		
 	}
 
 	public static int modifiedNegotiation(Vehicle v1, Vehicle v2) {
