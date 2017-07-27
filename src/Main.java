@@ -4,6 +4,8 @@ import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.Locale;
 
+import org.json.simple.JSONObject;
+
 public class Main {
 
 	public static NumberFormat nf = NumberFormat.getNumberInstance(Locale.US);
@@ -18,50 +20,57 @@ public class Main {
 		
 		dbController = new DatabaseController();
 		ArrayList<String> accidentsIndexes = (ArrayList<String>) dbController.getAccidentIndexes();
-
+		System.out.println(accidentsIndexes.size());
+		//TODO change 2 to accidentsIndexes.size()
 		for (int i = 0; i < 2/*accidentsIndexes.size()*/; i++) {
 			vehicles = dbController.getVehiclesByAccidentIndex(accidentsIndexes.get(i));
 			vehicles.get(0).setPrivacyRandom();
 			vehicles.get(1).setPrivacyRandom();
 			System.out.println(vehicles.get(0));
 			System.out.println(vehicles.get(1));
+			JSONObject thres = new JSONObject();
 			for(int k=0; k<3;k++) {
+				JSONObject type = new JSONObject();
 				vehicles.get(0).setThreshold(thresholds[k]);
 				vehicles.get(1).setThreshold(thresholds[k]);
 				System.out.println("Threshold: "+ thresholds[k] + " ____________________________________________________");
 		
 				System.out.println("Basic ---------------------------------------------------------------------");
-				startAndResult(0, 1, 1);
+				type.put("Basic", startAndResult(0, 1, 1));
 				vehicles.get(0).clear();
 				vehicles.get(1).clear();
 			
 				vehicles.get(0).isTurn = true;
 				vehicles.get(1).isTurn = true;
 				System.out.println("Turn Based ----------------------------------------------------------------");
-				startAndResult(0, 1, 2);
+				type.put("Turn Based", startAndResult(0, 1, 2));
 				vehicles.get(0).clear();
 				vehicles.get(1).clear();
 				vehicles.get(0).isTurn = false;
 				vehicles.get(1).isTurn = false;
 			
 				System.out.println("Auction Based -------------------------------------------------------------");
-				startAndResult(0, 1, 3);
+				type.put("Auction Based", startAndResult(0, 1, 3));
 				vehicles.get(0).clear();
 				vehicles.get(1).clear();
 			
 				System.out.println("Modified Auction Based -------------------------------------------------------------");
-				startAndResult(0, 1, 4);
+				type.put("Modified Auction", startAndResult(0, 1, 4));
 				vehicles.get(0).clear();
 				vehicles.get(1).clear();
 				
+				thres.put(""+thresholds[k], type);
 			}
+			System.out.println(thres.toString());
+			System.out.println();
+			//TODO add thres JSONOBject to Database
 			vehicles.get(0).setThreshold(thresholds[0]);
 			vehicles.get(1).setThreshold(thresholds[0]);
 		}
 		System.out.println();
 	}
 	
-	public static void startAndResult(int index1, int index2, int commType) {
+	public static JSONObject startAndResult(int index1, int index2, int commType) {
 		System.out.println("v1 = Vehicle " + (index1 + 1) + " v2 = Vehicle " + (index2 + 1));
 		int result;
 		if(commType == 1) {
@@ -87,6 +96,27 @@ public class Main {
 				+ formatter.format(100*vehicles.get(index2).lostPrivacy / vehicles.get(index2).totalPrivacy) + "%");
 		System.out.println();
 		System.out.println();
+		
+		JSONObject item = new JSONObject();
+		item.put("Privacy Loss of Vehicle 1", "" + formatter.format(100*vehicles.get(index1).lostPrivacy / vehicles.get(index1).totalPrivacy) + "%");
+		item.put("Privacy Loss of Vehicle 2", "" + formatter.format(100*vehicles.get(index2).lostPrivacy / vehicles.get(index2).totalPrivacy) + "%");
+		return item;
+		/*
+		String message;
+		JSONObject json = new JSONObject();
+		json.put("name", "student");
+		
+		JSONArray array = new JSONArray();
+		JSONObject item = new JSONObject();
+		item.put("information", "test");
+		item.put("id", 3);
+		item.put("name", "course1");
+		array.put(item);
+		
+		json.put("course", array);
+		
+		message = json.toString();
+		*/
 		
 	}
 
