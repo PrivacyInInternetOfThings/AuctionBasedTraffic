@@ -10,6 +10,7 @@ import com.mongodb.DBCollection;
 import com.mongodb.DBCursor;
 import com.mongodb.DBObject;
 import com.mongodb.MongoClient;
+import com.mongodb.WriteConcern;
 
 public class DatabaseController {
 
@@ -19,7 +20,7 @@ public class DatabaseController {
 	private DBCollection experimentCollection;
 	private String dbName = "traffic";
 	private String experimentDbName = "experiments";
-	private String experimenstCollectionName = "PrivacyLossExperiment";
+	private String experimenstCollectionName = "experiments_collection";
 	private Set<String> collectionSet;
 	private String vehiclesCollectionName = "Vehicles";
 	private String accidentsCollectionName = "Accidents";
@@ -125,7 +126,8 @@ public class DatabaseController {
 	}
 	
 	public void saveExperiment(BasicDBObject doc){
-		experimentCollection.insert(doc);		
+		System.out.println(experimentDatabase.getCollectionNames());
+		experimentCollection.insert(WriteConcern.ACKNOWLEDGED, doc);		
 	}
 	
 }

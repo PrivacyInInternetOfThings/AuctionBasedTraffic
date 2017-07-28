@@ -40,7 +40,7 @@ public class Main {
 		ArrayList<String> accidentsIndexes = (ArrayList<String>) dbController.getAccidentIndexes();
 		System.out.println(accidentsIndexes.size());
 		// TODO change 2 to accidentsIndexes.size()
-		for (int i = 0; i < 2; // accidentsIndexes.size();
+		for (int i = 0; i < accidentsIndexes.size();
 				i++) {
 			vehicles = dbController.getVehiclesByAccidentIndex(accidentsIndexes.get(i));
 			vehicles.get(0).setPrivacyRandom();
@@ -109,9 +109,9 @@ public class Main {
 			BasicDBObject vehicle2Info = vehicleObject(vehicles.get(1));
 			
 			accident.put("Accident_Index", accidentsIndexes.get(i));
-			accident.put("Auctions", thres);
 			accident.put("Vehicle 1", vehicle1Info);
 			accident.put("Vehicle 2", vehicle2Info);
+			accident.put("Auctions", thres);
 			System.out.println(accident.toString());
 			// TODO add accident BasicDBObject to Database
 
