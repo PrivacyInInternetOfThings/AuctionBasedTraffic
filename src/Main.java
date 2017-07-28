@@ -89,9 +89,9 @@ public class Main {
 
 				thres.put(("" + thresholds[k]).replace('.', ','), type);
 			}
-			System.out.println(thres.toString());
-			System.out.println(v1.toString());
-			System.out.println(v2.toString());
+			//System.out.println(thres.toString());
+			//System.out.println(v1.toString());
+			//System.out.println(v2.toString());
 			formattedString = v1.toString().replace("[", "") // remove the right
 																// bracket
 					.replace("]", "") // remove the left bracket
@@ -104,13 +104,19 @@ public class Main {
 			writer.println(formattedString);
 			System.out.println();
 			BasicDBObject accident = new BasicDBObject();
-			accident.put(accidentsIndexes.get(i), thres);
+
+			BasicDBObject vehicle1Info = vehicleObject(vehicles.get(0));
+			BasicDBObject vehicle2Info = vehicleObject(vehicles.get(1));
 			
+			accident.put("Accident_Index", accidentsIndexes.get(i));
+			accident.put("Auctions", thres);
+			accident.put("Vehicle 1", vehicle1Info);
+			accident.put("Vehicle 2", vehicle2Info);
+			System.out.println(accident.toString());
 			// TODO add accident BasicDBObject to Database
 
-			// BasicDBObject doc = (BasicDBObject)
-			// JSON.parse(accident.toJSONString());
-			// dbController.saveExperiment(accident);
+			
+			dbController.saveExperiment(accident);
 
 			vehicles.get(0).setThreshold(thresholds[0]);
 			vehicles.get(1).setThreshold(thresholds[0]);
