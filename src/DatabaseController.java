@@ -15,7 +15,11 @@ public class DatabaseController {
 
 	private MongoClient mongoClient;
 	private DB trafficDatabase;
+	private DB experimentDatabase;
+	private DBCollection experimentCollection;
 	private String dbName = "traffic";
+	private String experimentDbName = "experiments";
+	private String experimenstCollectionName = "PrivacyLossExperiment";
 	private Set<String> collectionSet;
 	private String vehiclesCollectionName = "Vehicles";
 	private String accidentsCollectionName = "Accidents";
@@ -23,6 +27,8 @@ public class DatabaseController {
 	public DatabaseController() throws UnknownHostException {
 		mongoClient = new MongoClient();
 		trafficDatabase = mongoClient.getDB(dbName);
+		experimentDatabase = mongoClient.getDB(experimentDbName);
+		experimentCollection = experimentDatabase.getCollection(experimenstCollectionName);
 		collectionSet = trafficDatabase.getCollectionNames();
 		System.out.println(collectionSet);
 	}
@@ -117,4 +123,9 @@ public class DatabaseController {
 		DBCursor c = vehiclesCollection
 				.find(new BasicDBObject("Accident_Index", accidentIndex).append("Vehicle_Reference", reference));
 	}
+	
+	public void saveExperiment(BasicDBObject doc){
+		experimentCollection.insert(doc);		
+	}
+	
 }
