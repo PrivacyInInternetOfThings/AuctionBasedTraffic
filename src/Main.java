@@ -160,7 +160,7 @@ public class Main {
 		info.put("Age Band of Driver", ageBand);
 		
 		BasicDBObject ageVehicle = new BasicDBObject();
-		ageVehicle.put("Value", ""+ v.ageBandOfDriver);
+		ageVehicle.put("Value", ""+ v.ageOfCar);
 		ageVehicle.put("Privacy Value", v.privacy[3]);
 		info.put("Age of Vehicle", ageVehicle);
 
