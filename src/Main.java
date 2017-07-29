@@ -29,10 +29,8 @@ public class Main {
 			throws UnknownHostException, FileNotFoundException, UnsupportedEncodingException {
 		PrintWriter writer = new PrintWriter("name.csv", "UTF-8");
 		initHeader();
-		String formattedString = header.toString().replace("[", "") // remove
-																	// the right
-																	// bracket
-				.replace("]", "") // remove the left bracket
+		String formattedString = header.toString().replace("[", "")
+				.replace("]", "")
 				.trim();
 		writer.println(formattedString);
 		dbController = new DatabaseController();
@@ -91,17 +89,15 @@ public class Main {
 
 				thres.put(("" + thresholds[k]).replace('.', ','), type);
 			}
-			//System.out.println(thres.toString());
-			//System.out.println(v1.toString());
-			//System.out.println(v2.toString());
-			formattedString = v1.toString().replace("[", "") // remove the right
-																// bracket
-					.replace("]", "") // remove the left bracket
+//			System.out.println(thres.toString());
+//			System.out.println(v1.toString());
+//			System.out.println(v2.toString());
+			formattedString = v1.toString().replace("[", "")
+					.replace("]", "")
 					.trim();
 			writer.println(formattedString);
-			formattedString = v2.toString().replace("[", "") // remove the right
-																// bracket
-					.replace("]", "") // remove the left bracket
+			formattedString = v2.toString().replace("[", "")
+					.replace("]", "")
 					.trim();
 			writer.println(formattedString);
 //			System.out.println();
@@ -117,8 +113,7 @@ public class Main {
 //			System.out.println(accident.toString());
 			// TODO add accident BasicDBObject to Database
 
-			
-			dbController.saveExperiment(accident);
+//			dbController.saveExperiment(accident);
 
 			vehicles.get(0).setThreshold(thresholds[0]);
 			vehicles.get(1).setThreshold(thresholds[0]);
@@ -148,12 +143,12 @@ public class Main {
 
 		BasicDBObject vehicleType = new BasicDBObject();
 		vehicleType.put("Value", "" + v.vehicleType);
-		vehicleType.put("Privacy Value", "" + v.privacy[0]);
+		vehicleType.put("Privacy Value", v.privacy[0]);
 		info.put("Vehicle Type", vehicleType);
 
 		BasicDBObject journeyPurpose = new BasicDBObject();
 		journeyPurpose.put("Value", "" + v.journeyType);
-		journeyPurpose.put("Privacy Value", "" + v.privacy[1]);
+		journeyPurpose.put("Privacy Value", v.privacy[1]);
 		info.put("Purpose of Journey", journeyPurpose);
 		
 		BasicDBObject ageBand = new BasicDBObject();
@@ -197,10 +192,9 @@ public class Main {
 //		System.out.println();
 
 		BasicDBObject item = new BasicDBObject();
-		item.put("Privacy Loss of Vehicle 1", ""
-				+ formatter.format(100 * vehicles.get(index1).lostPrivacy / vehicles.get(index1).totalPrivacy) + "%");
-		item.put("Privacy Loss of Vehicle 2", ""
-				+ formatter.format(100 * vehicles.get(index2).lostPrivacy / vehicles.get(index2).totalPrivacy) + "%");
+		item.put("Privacy Loss of Vehicle 1", Double.valueOf(formatter.format(100 * vehicles.get(index1).lostPrivacy / vehicles.get(index1).totalPrivacy)));
+		item.put("Privacy Loss of Vehicle 2", Double.valueOf(formatter.format(100 * vehicles.get(index2).lostPrivacy / vehicles.get(index2).totalPrivacy)));
+		item.put("Average Loss", Double.valueOf(formatter.format((100 * vehicles.get(index1).lostPrivacy / vehicles.get(index1).totalPrivacy)/2+(100 * vehicles.get(index2).lostPrivacy / vehicles.get(index2).totalPrivacy)/2)));
 		item.put("Winner", "Vehicle "+result);
 		v1.add("" + formatter.format(100 * vehicles.get(index1).lostPrivacy / vehicles.get(index1).totalPrivacy) + "%");
 		v2.add("" + formatter.format(100 * vehicles.get(index2).lostPrivacy / vehicles.get(index2).totalPrivacy) + "%");
@@ -329,8 +323,7 @@ public class Main {
 		}
 //		if (utility2 == 0)
 //			System.out.println("\tNo Offer");
-//		System.out
-//				.println("\nv1 utility: " + formatter.format(utility1) + " v2 utility: " + formatter.format(utility2));
+//		System.out.println("\nv1 utility: " + formatter.format(utility1) + " v2 utility: " + formatter.format(utility2));
 		if (utility1 >= utility2) {
 			return 1;
 		} else {
