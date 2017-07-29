@@ -5,6 +5,5 @@
 	<classpathentry exported="true" kind="lib" path="mongo-java-driver-2.13.3.jar"/>
 	<classpathentry exported="true" kind="lib" path="mongodb-driver-core-3.4.2.jar"/>
 	<classpathentry exported="true" kind="lib" path="bson-3.4.2.jar"/>
-	<classpathentry exported="true" kind="lib" path="/Users/tunahansalih/Work/AuctionTraffic/AuctionBasedTraffic/json-simple-1.1.1.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
