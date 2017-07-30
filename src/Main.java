@@ -59,8 +59,7 @@ public class Main {
 				BasicDBObject type = new BasicDBObject();
 				vehicles.get(0).setThreshold(thresholds[k]);
 				vehicles.get(1).setThreshold(thresholds[k]);
-//				System.out.println(
-//						"Threshold: " + thresholds[k] + " ____________________________________________________");
+//				System.out.println("Threshold: " + thresholds[k] + " __________________________________________");
 
 //				System.out.println("Basic ---------------------------------------------------------------------");
 				type.put("Basic", startAndResult(0, 1, 1));
@@ -81,8 +80,7 @@ public class Main {
 				vehicles.get(0).clear();
 				vehicles.get(1).clear();
 
-//				System.out.println(
-//						"Modified Auction Based -------------------------------------------------------------");
+//				System.out.println("Modified Auction Based ----------------------------------------------------");
 				type.put("Modified Auction", startAndResult(0, 1, 4));
 				vehicles.get(0).clear();
 				vehicles.get(1).clear();
@@ -113,7 +111,7 @@ public class Main {
 //			System.out.println(accident.toString());
 			// TODO add accident BasicDBObject to Database
 
-//			dbController.saveExperiment(accident);
+			dbController.saveExperiment(accident);
 
 			vehicles.get(0).setThreshold(thresholds[0]);
 			vehicles.get(1).setThreshold(thresholds[0]);
@@ -176,21 +174,21 @@ public class Main {
 		} else {
 			result = modifiedNegotiation(vehicles.get(index1), vehicles.get(index2));
 		}
-//		System.out.println("---------------------------------");
+/*		System.out.println("---------------------------------");
 		if (result == 1) {
-//			System.out.println("Vehicle " + (index1 + 1) + " gets priority");
+			System.out.println("Vehicle " + (index1 + 1) + " gets priority");
 		} else {
-//			System.out.println("Vehicle " + (index2 + 1) + " gets priority");
+			System.out.println("Vehicle " + (index2 + 1) + " gets priority");
 		}
-//		System.out.println("v1 lostPrivacy: " + formatter.format(vehicles.get(index1).lostPrivacy) + "/"
-//				+ formatter.format(vehicles.get(index1).totalPrivacy) + " "
-//				+ formatter.format(100 * vehicles.get(index1).lostPrivacy / vehicles.get(index1).totalPrivacy) + "%"
-//				+ " v2 lostPrivacy: " + formatter.format(vehicles.get(index2).lostPrivacy) + "/"
-//				+ formatter.format(vehicles.get(index2).totalPrivacy) + " "
-//				+ formatter.format(100 * vehicles.get(index2).lostPrivacy / vehicles.get(index2).totalPrivacy) + "%");
-//		System.out.println();
-//		System.out.println();
-
+		System.out.println("v1 lostPrivacy: " + formatter.format(vehicles.get(index1).lostPrivacy) + "/"
+				+ formatter.format(vehicles.get(index1).totalPrivacy) + " "
+				+ formatter.format(100 * vehicles.get(index1).lostPrivacy / vehicles.get(index1).totalPrivacy) + "%"
+				+ " v2 lostPrivacy: " + formatter.format(vehicles.get(index2).lostPrivacy) + "/"
+				+ formatter.format(vehicles.get(index2).totalPrivacy) + " "
+				+ formatter.format(100 * vehicles.get(index2).lostPrivacy / vehicles.get(index2).totalPrivacy) + "%");
+		System.out.println();
+		System.out.println();
+*/
 		BasicDBObject item = new BasicDBObject();
 		item.put("Privacy Loss of Vehicle 1", Double.valueOf(formatter.format(100 * vehicles.get(index1).lostPrivacy / vehicles.get(index1).totalPrivacy)));
 		item.put("Privacy Loss of Vehicle 2", Double.valueOf(formatter.format(100 * vehicles.get(index2).lostPrivacy / vehicles.get(index2).totalPrivacy)));
@@ -213,7 +211,7 @@ public class Main {
 		double oldUtility1 = 0, oldUtility2 = 0;
 		double utility1 = 0, utility2 = 0;
 //		System.out.println("\n-----------" + "Turn for v" + 1 + "-----------\n");
-		utility1 += v1.makeOffer();
+		utility1 += v1.makeOffer(0);
 //		System.out.println("\nv1 utility: " + utility1 + " v2 utility: " + utility2);
 		int turn = 2, count = 0;
 		while (++count < 25) {
@@ -314,17 +312,17 @@ public class Main {
 		for (int i = 0; i < 4; i++) {
 			utility1 += v1.makeOffer();
 		}
-//		if (utility1 == 0)
-//			System.out.println("\tNo Offer");
-//		System.out.println("\n\tOffers of v" + 2);
-//		System.out.println("\t------------");
-		for (int i = 0; i < 4; i++) {
+/*		if (utility1 == 0)
+			System.out.println("\tNo Offer");
+		System.out.println("\n\tOffers of v" + 2);
+		System.out.println("\t------------");
+*/		for (int i = 0; i < 4; i++) {
 			utility2 += v2.makeOffer();
 		}
-//		if (utility2 == 0)
-//			System.out.println("\tNo Offer");
-//		System.out.println("\nv1 utility: " + formatter.format(utility1) + " v2 utility: " + formatter.format(utility2));
-		if (utility1 >= utility2) {
+/*		if (utility2 == 0)
+			System.out.println("\tNo Offer");
+		System.out.println("\nv1 utility: " + formatter.format(utility1) + " v2 utility: " + formatter.format(utility2));
+*/		if (utility1 >= utility2) {
 			return 1;
 		} else {
 			return 2;
