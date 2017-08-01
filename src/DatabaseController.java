@@ -31,7 +31,7 @@ public class DatabaseController {
 		experimentDatabase = mongoClient.getDB(experimentDbName);
 		experimentCollection = experimentDatabase.getCollection(experimenstCollectionName);
 		collectionSet = trafficDatabase.getCollectionNames();
-		System.out.println(collectionSet);
+//		System.out.println(collectionSet);
 	}
 
 	public List<String> getAccidentIndexes() {
@@ -126,7 +126,8 @@ public class DatabaseController {
 	}
 	
 	public void saveExperiment(BasicDBObject doc){
-		System.out.println(experimentDatabase.getCollectionNames());
+//		System.out.println(experimentDatabase.getCollectionNames());
+		experimentDatabase.getCollectionNames();
 		experimentCollection.insert(WriteConcern.ACKNOWLEDGED, doc);		
 	}
 	
