@@ -15,7 +15,7 @@ public class Main {
 	 * To create CSV output, make "printCSV" true To save the experiments to DB,
 	 * make "saveMongo" true
 	 */
-	public static boolean printCSV = true;
+	public static boolean printCSV = false;
 	public static boolean saveMongo = true;
 
 	public static NumberFormat nf = NumberFormat.getNumberInstance(Locale.US);
@@ -121,11 +121,13 @@ public class Main {
 			//System.out.println();
 
 			BasicDBObject accident = new BasicDBObject();
+			
 
 			BasicDBObject vehicle1Info = vehicleObject(vehicles.get(0));
 			BasicDBObject vehicle2Info = vehicleObject(vehicles.get(1));
 
 			accident.put("Accident_Index", accidentsIndexes.get(i));
+			accident.put("Random Seed", Vehicle.randomSeed);
 			accident.put("Vehicle 1", vehicle1Info);
 			accident.put("Vehicle 2", vehicle2Info);
 			accident.put("Auctions", thres);
@@ -213,9 +215,21 @@ public class Main {
 */
 		BasicDBObject item = new BasicDBObject();
 
-		item.put("Privacy Loss of Vehicle 1", Double.valueOf(formatter.format(100 * vehicles.get(index1).lostPrivacy / vehicles.get(index1).totalPrivacy)));
-		item.put("Privacy Loss of Vehicle 2", Double.valueOf(formatter.format(100 * vehicles.get(index2).lostPrivacy / vehicles.get(index2).totalPrivacy)));
-		item.put("Average Loss", Double.valueOf(formatter.format((100 * vehicles.get(index1).lostPrivacy / vehicles.get(index1).totalPrivacy)/2+(100 * vehicles.get(index2).lostPrivacy / vehicles.get(index2).totalPrivacy)/2)));
+		double shlossv1 =0;
+		double shlossv2 =0;
+		
+		if(vehicles.get(index1).totalShareablePrivacy != 0 && vehicles.get(index1).lostPrivacy!=0)
+			shlossv1 = 100 * vehicles.get(index1).lostPrivacy / vehicles.get(index1).totalShareablePrivacy;
+		if(vehicles.get(index2).totalShareablePrivacy != 0 && vehicles.get(index2).lostPrivacy!=0)
+			shlossv2 = 100 * vehicles.get(index2).lostPrivacy / vehicles.get(index2).totalShareablePrivacy;
+		
+		item.put("Privacy Loss of Vehicle 1", 100 * vehicles.get(index1).lostPrivacy / vehicles.get(index1).totalPrivacy);
+		item.put("Privacy Loss of Vehicle 2", 100 * vehicles.get(index2).lostPrivacy / vehicles.get(index2).totalPrivacy);
+		item.put("Privacy Shareable Loss of Vehicle 1", shlossv1);
+		item.put("Privacy Shareable Loss of Vehicle 2", shlossv2);
+		item.put("LossAVG", (100 * vehicles.get(index1).lostPrivacy / vehicles.get(index1).totalPrivacy)/2+(100 * vehicles.get(index2).lostPrivacy / vehicles.get(index2).totalPrivacy)/2);
+		item.put("ShareableLossAVG", (shlossv1+shlossv2)/2);
+		
 		item.put("Winner", "Vehicle "+result);
 		v1.add("" + formatter.format(100 * vehicles.get(index1).lostPrivacy / vehicles.get(index1).totalPrivacy));
 		v2.add("" + formatter.format(100 * vehicles.get(index2).lostPrivacy / vehicles.get(index2).totalPrivacy));
@@ -228,8 +242,22 @@ public class Main {
 			v2.add("W");
 		}
 		
-		item.put("Utility of Vehicle 1",vehicles.get(index1).utility);
-		item.put("Utility of Vehicle 2",vehicles.get(index2).utility);
+		double gain1=0;
+		double gain2=0;
+		if(vehicles.get(index1).calculatePossibleUtilityPoints()!=0 && vehicles.get(index1).calculatePossibleUtilityPoints() != vehicles.get(index1).utility)
+			gain1= (vehicles.get(index1).calculatePossibleUtilityPoints()-vehicles.get(index1).utility) / vehicles.get(index1).calculatePossibleUtilityPoints();
+		if(vehicles.get(index2).calculatePossibleUtilityPoints()!=0 && vehicles.get(index2).calculatePossibleUtilityPoints() != vehicles.get(index2).utility)
+			gain2= (vehicles.get(index2).calculatePossibleUtilityPoints()-vehicles.get(index2).utility) / vehicles.get(index2).calculatePossibleUtilityPoints();
+		item.put("UtilV1",vehicles.get(index1).utility);
+		item.put("UtilV2",vehicles.get(index2).utility);
+		item.put("MaxUtilV1",vehicles.get(index1).calculatePossibleUtilityPoints());
+		item.put("MaxUtilV2",vehicles.get(index2).calculatePossibleUtilityPoints());
+		item.put("UtilGainV1",gain1);
+		item.put("UtilGainV2",gain2);
+		item.put("UtilGainAVG", (gain1+gain2)/2);
+		
+		item.put("ShareableNoV1",vehicles.get(index1).numberOfShareable());
+		item.put("ShareableNoV2",vehicles.get(index2).numberOfShareable());
 		
 		return item;
 	}

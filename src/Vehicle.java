@@ -13,6 +13,7 @@ public class Vehicle {
 	public int ageOfCar;
 	public int ageBandOfDriver;
 	public double lostPrivacy;
+	public double totalShareablePrivacy = 0;
 	public double totalPrivacy;
 	public boolean isTurn;
 	public int id;
@@ -80,8 +81,22 @@ public class Vehicle {
 		this.privacy[2] = malfunction;
 		this.privacy[3] = people;
 		totalPrivacy = vehicle + journey + malfunction + people;
-		for (int i = 0; i < 4; i++) {
-			// this.privacy[i] /= 4;
+		
+		if (privacy[0] < this.threshold) {
+
+			totalShareablePrivacy += vehicle;
+		}
+		if (privacy[1] < this.threshold) {
+
+			totalShareablePrivacy += journey;
+		}
+		if (privacy[2] < this.threshold) {
+
+			totalShareablePrivacy += malfunction;
+		}
+		if (privacy[3] < this.threshold) {
+
+			totalShareablePrivacy += people;
 		}
 		/*
 		 * for (int i = 0; i < 4; i++) { System.out.print(privacy[i] + " "); }
@@ -96,6 +111,25 @@ public class Vehicle {
 			privacy[i] = (int) (privacy[i] * 1000) / 1000.0;
 			totalPrivacy += privacy[i];
 		}
+		
+		if (privacy[0] < this.threshold) {
+
+			totalShareablePrivacy += privacy[0];
+		}
+		if (privacy[1] < this.threshold) {
+
+			totalShareablePrivacy += privacy[1];
+		}
+		if (privacy[2] < this.threshold) {
+
+			totalShareablePrivacy += privacy[2];
+		}
+		if (privacy[3] < this.threshold) {
+
+			totalShareablePrivacy += privacy[3];
+		}
+		
+		//System.out.println(totalShareablePrivacy);
 	}
 	public void setReference(int ref){
 		this.reference = ref;
@@ -318,11 +352,33 @@ public class Vehicle {
 		}
 		if (privacy[2] < this.threshold) {
 
-			res += this.ageBandOfDriver * proportionAgeBand;
+			res += this.ageBandOfDriver / 20.0 * proportionAgeBand;
 		}
 		if (privacy[3] < this.threshold) {
 
 			res += this.ageOfCar / 50.0 * proportionVehicleAge;
+		}
+		return res;
+	}
+	
+	public int numberOfShareable() {
+		int res = 0;
+
+		if (privacy[0] < this.threshold) {
+
+			res += 1;
+		}
+		if (privacy[1] < this.threshold) {
+
+			res += 1;
+		}
+		if (privacy[2] < this.threshold) {
+
+			res += 1;
+		}
+		if (privacy[3] < this.threshold) {
+
+			res += 1;
 		}
 		return res;
 	}
