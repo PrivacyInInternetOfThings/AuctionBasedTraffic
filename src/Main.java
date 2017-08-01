@@ -15,8 +15,8 @@ public class Main {
 	 * To create CSV output, make "printCSV" true To save the experiments to DB,
 	 * make "saveMongo" true
 	 */
-	public static boolean printCSV = false;
-	public static boolean saveMongo = false;
+	public static boolean printCSV = true;
+	public static boolean saveMongo = true;
 
 	public static NumberFormat nf = NumberFormat.getNumberInstance(Locale.US);
 	public static DecimalFormat df = (DecimalFormat) nf;
