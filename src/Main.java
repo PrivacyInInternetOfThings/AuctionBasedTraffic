@@ -46,7 +46,7 @@ public class Main {
 				getGoodIDS();
 
 		// Print accident number
-		System.out.println(accidentsIndexes.size());
+		//System.out.println(accidentsIndexes.size());
 
 		for (int i = 0; i < accidentsIndexes.size(); i++) {
 			vehicles = dbController.getVehiclesByAccidentIndex(accidentsIndexes.get(i));
@@ -54,8 +54,8 @@ public class Main {
 			vehicles.get(1).setPrivacyRandom();
 
 			// Print vehicle info
-			System.out.println(vehicles.get(0));
-			System.out.println(vehicles.get(1));
+			//System.out.println(vehicles.get(0));
+			//System.out.println(vehicles.get(1));
 
 			BasicDBObject thres = new BasicDBObject();
 
@@ -118,7 +118,7 @@ public class Main {
 			if (printCSV) {
 				writer.println(formattedString);
 			}
-			System.out.println();
+			//System.out.println();
 
 			BasicDBObject accident = new BasicDBObject();
 
@@ -130,7 +130,7 @@ public class Main {
 			accident.put("Vehicle 2", vehicle2Info);
 			accident.put("Auctions", thres);
 
-			System.out.println(accident.toString());
+			//System.out.println(accident.toString());
 
 			if (saveMongo) {
 				dbController.saveExperiment(accident);
