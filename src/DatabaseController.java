@@ -19,7 +19,7 @@ public class DatabaseController {
 	private DB experimentDatabase;
 	private DBCollection experimentCollection;
 	private String dbName = "traffic";
-	private String experimentDbName = "experiments";
+	private String experimentDbName = "experiments_selected";
 	private String experimenstCollectionName = "experiments_collection";
 	private Set<String> collectionSet;
 	private String vehiclesCollectionName = "Vehicles";

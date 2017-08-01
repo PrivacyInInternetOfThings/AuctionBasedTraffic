@@ -1,19 +1,22 @@
-import java.io.FileNotFoundException;
+import java.io.BufferedReader;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStreamReader;
 import java.io.PrintWriter;
-import java.io.UnsupportedEncodingException;
-import java.net.UnknownHostException;
-import java.sql.Savepoint;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.Locale;
 
-import org.json.simple.JSONObject;
-
 import com.mongodb.BasicDBObject;
-import com.mongodb.util.JSON;
 
 public class Main {
+	/*
+	 * To create CSV output, make "printCSV" true To save the experiments to DB,
+	 * make "saveMongo" true
+	 */
+	public static boolean printCSV = false;
+	public static boolean saveMongo = false;
 
 	public static NumberFormat nf = NumberFormat.getNumberInstance(Locale.US);
 	public static DecimalFormat df = (DecimalFormat) nf;
@@ -26,27 +29,40 @@ public class Main {
 	public static ArrayList<String> v2;
 	public static ArrayList<String> header = new ArrayList<>();
 
-	public static void main(String[] args)
-			throws UnknownHostException, FileNotFoundException, UnsupportedEncodingException {
-		PrintWriter writer = new PrintWriter("name.csv", "UTF-8");
+	public static void main(String[] args) throws IOException {
+
+		PrintWriter writer = new PrintWriter("experiments.csv", "UTF-8");
+
 		initHeader();
 		String formattedString = header.toString().replace("[", "") // remove
 																	// the right
 																	// bracket
 				.replace("]", "") // remove the left bracket
 				.trim();
-		writer.println(formattedString);
+		
+		if(printCSV){
+			writer.println(formattedString);
+		}
 		dbController = new DatabaseController();
-		ArrayList<String> accidentsIndexes = (ArrayList<String>) dbController.getAccidentIndexes();
+		
+		ArrayList<String> accidentsIndexes = 
+				//(ArrayList<String>) dbController.getAccidentIndexes();
+				getGoodIDS();
+		
+		
+		//Print accident number
 		System.out.println(accidentsIndexes.size());
-		// TODO change 2 to accidentsIndexes.size()
-		for (int i = 0; i < accidentsIndexes.size();
-				i++) {
+
+		
+		for (int i = 0; i < accidentsIndexes.size(); i++) {
 			vehicles = dbController.getVehiclesByAccidentIndex(accidentsIndexes.get(i));
 			vehicles.get(0).setPrivacyRandom();
 			vehicles.get(1).setPrivacyRandom();
+			
+			//Print vehicle info
 			System.out.println(vehicles.get(0));
 			System.out.println(vehicles.get(1));
+			
 			BasicDBObject thres = new BasicDBObject();
 
 			v1 = new ArrayList<>();
@@ -89,35 +105,37 @@ public class Main {
 
 				thres.put(("" + thresholds[k]).replace('.', ','), type);
 			}
-			//System.out.println(thres.toString());
-			//System.out.println(v1.toString());
-			//System.out.println(v2.toString());
+			
 			formattedString = v1.toString().replace("[", "") // remove the right
 																// bracket
 					.replace("]", "") // remove the left bracket
 					.trim();
-			writer.println(formattedString);
+			if(printCSV){	
+				writer.println(formattedString);
+			}
 			formattedString = v2.toString().replace("[", "") // remove the right
 																// bracket
 					.replace("]", "") // remove the left bracket
 					.trim();
-			writer.println(formattedString);
+
+			if (printCSV) {
+				writer.println(formattedString);
+			}
 			System.out.println();
 			BasicDBObject accident = new BasicDBObject();
 
 			BasicDBObject vehicle1Info = vehicleObject(vehicles.get(0));
 			BasicDBObject vehicle2Info = vehicleObject(vehicles.get(1));
-			
+
 			accident.put("Accident_Index", accidentsIndexes.get(i));
 			accident.put("Vehicle 1", vehicle1Info);
 			accident.put("Vehicle 2", vehicle2Info);
 			accident.put("Auctions", thres);
 			System.out.println(accident.toString());
-			// TODO add accident BasicDBObject to Database
 
-			
-			dbController.saveExperiment(accident);
-
+			if (saveMongo) {
+				dbController.saveExperiment(accident);
+			}
 			vehicles.get(0).setThreshold(thresholds[0]);
 			vehicles.get(1).setThreshold(thresholds[0]);
 		}
@@ -153,14 +171,14 @@ public class Main {
 		journeyPurpose.put("Value", "" + v.journeyType);
 		journeyPurpose.put("Privacy Value", "" + v.privacy[1]);
 		info.put("Purpose of Journey", journeyPurpose);
-		
+
 		BasicDBObject ageBand = new BasicDBObject();
-		ageBand.put("Value", ""+ v.ageBandOfDriver);
+		ageBand.put("Value", "" + v.ageBandOfDriver);
 		ageBand.put("Privacy Value", v.privacy[2]);
 		info.put("Age Band of Driver", ageBand);
-		
+
 		BasicDBObject ageVehicle = new BasicDBObject();
-		ageVehicle.put("Value", ""+ v.ageOfCar);
+		ageVehicle.put("Value", "" + v.ageOfCar);
 		ageVehicle.put("Privacy Value", v.privacy[3]);
 		info.put("Age of Vehicle", ageVehicle);
 
@@ -196,11 +214,11 @@ public class Main {
 
 		BasicDBObject item = new BasicDBObject();
 		item.put("Privacy Loss of Vehicle 1", ""
-				+ formatter.format(100 * vehicles.get(index1).lostPrivacy / vehicles.get(index1).totalPrivacy) + "%");
+				+ formatter.format(100 * vehicles.get(index1).lostPrivacy / vehicles.get(index1).totalPrivacy));
 		item.put("Privacy Loss of Vehicle 2", ""
-				+ formatter.format(100 * vehicles.get(index2).lostPrivacy / vehicles.get(index2).totalPrivacy) + "%");
-		v1.add("" + formatter.format(100 * vehicles.get(index1).lostPrivacy / vehicles.get(index1).totalPrivacy) + "%");
-		v2.add("" + formatter.format(100 * vehicles.get(index2).lostPrivacy / vehicles.get(index2).totalPrivacy) + "%");
+				+ formatter.format(100 * vehicles.get(index2).lostPrivacy / vehicles.get(index2).totalPrivacy));
+		v1.add("" + formatter.format(100 * vehicles.get(index1).lostPrivacy / vehicles.get(index1).totalPrivacy));
+		v2.add("" + formatter.format(100 * vehicles.get(index2).lostPrivacy / vehicles.get(index2).totalPrivacy));
 		if (result == 1) {
 			v1.add("W");
 			v2.add("L");
@@ -208,6 +226,10 @@ public class Main {
 			v1.add("L");
 			v2.add("W");
 		}
+		
+		item.put("Utility of Vehicle 1",vehicles.get(index1).utility);
+		item.put("Utility of Vehicle 2",vehicles.get(index2).utility);
+		
 		return item;
 	}
 
@@ -333,5 +355,26 @@ public class Main {
 		} else {
 			return 2;
 		}
+	}
+
+	public static ArrayList<String> getGoodIDS() throws IOException {
+		ArrayList<String> res = new ArrayList<String>();
+
+		String fileName = "ids.txt";
+
+		FileInputStream fis = new FileInputStream(fileName);
+
+		// Construct BufferedReader from InputStreamReader
+		BufferedReader br = new BufferedReader(new InputStreamReader(fis));
+
+		String line = null;
+		while ((line = br.readLine()) != null) {
+			// System.out.println(line);
+			res.add(line);
+		}
+
+		br.close();
+
+		return res;
 	}
 }
