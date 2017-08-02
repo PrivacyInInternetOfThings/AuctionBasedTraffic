@@ -255,6 +255,8 @@ public class Main {
 		item.put("UtilGainV1",gain1);
 		item.put("UtilGainV2",gain2);
 		item.put("UtilGainAVG", (gain1+gain2)/2);
+		item.put("UP", vehicles.get(index1).utility*vehicles.get(index2).utility);
+		item.put("PP", vehicles.get(index1).utility*vehicles.get(index2).utility*(1-Math.abs(vehicles.get(index1).utility-vehicles.get(index2).utility)));
 		
 		item.put("ShareableNoV1",vehicles.get(index1).numberOfShareable());
 		item.put("ShareableNoV2",vehicles.get(index2).numberOfShareable());
