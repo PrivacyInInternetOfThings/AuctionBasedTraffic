@@ -225,18 +225,19 @@ public class Main {
 		if(vehicles.get(index2).totalShareablePrivacy != 0 && vehicles.get(index2).lostPrivacy!=0)
 			shlossv2 = 100 * vehicles.get(index2).lostPrivacy / vehicles.get(index2).totalShareablePrivacy;
 		
-		/*if(shlossv1 >100 || shlossv2 >100){
+	    /*if(vehicles.get(index1).totalPrivacy < vehicles.get(index1).totalShareablePrivacy){
 			System.out.println(commType);
 			
 			System.out.println("threshold: "+vehicles.get(index1).threshold);
 			System.out.println(vehicles.get(index1).privacy[0]+" "+vehicles.get(index1).privacy[1]+" "+vehicles.get(index1).privacy[2]+" "+vehicles.get(index1).privacy[3]);
 					
 			System.out.println("lost:"+ vehicles.get(index1).lostPrivacy);
+			System.out.println("total:"+ vehicles.get(index1).totalPrivacy);
 			System.out.println("total shareable:"+ vehicles.get(index1).totalShareablePrivacy);
 			
 			System.out.println("shareable loss:"+shlossv1);
 			System.out.println();
-		}*/
+	    }*/
 		
 		
 		item.put("Privacy Loss of Vehicle 1", 100 * vehicles.get(index1).lostPrivacy / vehicles.get(index1).totalPrivacy);
@@ -266,6 +267,7 @@ public class Main {
 			gain2= (vehicles.get(index2).calculatePossibleUtilityPoints()-vehicles.get(index2).utility) / vehicles.get(index2).calculatePossibleUtilityPoints();
 		item.put("UtilV1",vehicles.get(index1).utility);
 		item.put("UtilV2",vehicles.get(index2).utility);
+		item.put("UtilAVG",(vehicles.get(index1).utility+vehicles.get(index2).utility)/2);
 		item.put("MaxUtilV1",vehicles.get(index1).calculatePossibleUtilityPoints());
 		item.put("MaxUtilV2",vehicles.get(index2).calculatePossibleUtilityPoints());
 		item.put("PrivacyGainV1",gain1);

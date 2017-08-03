@@ -115,6 +115,9 @@ public class Vehicle {
 	}
 	
 	public void setShareablePrivacy(){
+
+		totalShareablePrivacy = 0;
+		
 		if (privacy[0] < this.threshold) {
 
 			totalShareablePrivacy += privacy[0];
