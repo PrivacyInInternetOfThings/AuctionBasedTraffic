@@ -71,38 +71,38 @@ public class Vehicle {
 		this.utility = 0;
 	}
 
-	public void setPrivacy(
-			double vehicle, 
-			double journey, 
-			double malfunction, 
-			double people) {
-		this.privacy[0] = vehicle;
-		this.privacy[1] = journey;
-		this.privacy[2] = malfunction;
-		this.privacy[3] = people;
-		totalPrivacy = vehicle + journey + malfunction + people;
-		
-		if (privacy[0] < this.threshold) {
-
-			totalShareablePrivacy += vehicle;
-		}
-		if (privacy[1] < this.threshold) {
-
-			totalShareablePrivacy += journey;
-		}
-		if (privacy[2] < this.threshold) {
-
-			totalShareablePrivacy += malfunction;
-		}
-		if (privacy[3] < this.threshold) {
-
-			totalShareablePrivacy += people;
-		}
-		/*
-		 * for (int i = 0; i < 4; i++) { System.out.print(privacy[i] + " "); }
-		 * System.out.println(); System.out.println();
-		 */
-	}
+//	public void setPrivacy(
+//			double vehicle, 
+//			double journey, 
+//			double malfunction, 
+//			double people) {
+//		this.privacy[0] = vehicle;
+//		this.privacy[1] = journey;
+//		this.privacy[2] = malfunction;
+//		this.privacy[3] = people;
+//		totalPrivacy = vehicle + journey + malfunction + people;
+//		
+//		if (privacy[0] < this.threshold) {
+//
+//			totalShareablePrivacy += vehicle;
+//		}
+//		if (privacy[1] < this.threshold) {
+//
+//			totalShareablePrivacy += journey;
+//		}
+//		if (privacy[2] < this.threshold) {
+//
+//			totalShareablePrivacy += malfunction;
+//		}
+//		if (privacy[3] < this.threshold) {
+//
+//			totalShareablePrivacy += people;
+//		}
+//		/*
+//		 * for (int i = 0; i < 4; i++) { System.out.print(privacy[i] + " "); }
+//		 * System.out.println(); System.out.println();
+//		 */
+//	}
 
 	public void setPrivacyRandom() {
 		totalPrivacy = 0;
@@ -110,8 +110,11 @@ public class Vehicle {
 			this.privacy[i] = rand.nextDouble();
 			privacy[i] = (int) (privacy[i] * 1000) / 1000.0;
 			totalPrivacy += privacy[i];
+			
 		}
-		
+	}
+	
+	public void setShareablePrivacy(){
 		if (privacy[0] < this.threshold) {
 
 			totalShareablePrivacy += privacy[0];
@@ -128,9 +131,8 @@ public class Vehicle {
 
 			totalShareablePrivacy += privacy[3];
 		}
-		
-		//System.out.println(totalShareablePrivacy);
 	}
+	
 	public void setReference(int ref){
 		this.reference = ref;
 	}
@@ -227,15 +229,15 @@ public class Vehicle {
 //			System.out.println("\tAge Band of Driver Offer\n\tprivacy = " + privacy[2] + " utility = "
 //					+ formatter.format(this.ageBandOfDriver / 20.0 * proportionAgeBand));
 			this.lostPrivacy += privacy[2];
-			utility += this.ageBandOfDriver / 20.0 * proportionAgeBand;
-			return this.ageBandOfDriver / 20.0 * proportionAgeBand;
+			utility += getBandValue(this.ageBandOfDriver) * proportionAgeBand;
+			return getBandValue(this.ageBandOfDriver) * proportionAgeBand;
 		}
 		if (min == 3 && privacy[3] < this.threshold) {
 //			System.out.println("\tAge of Vehicle Offer\n\tprivacy = " + privacy[3] + " utility = "
 //					+ formatter.format(this.ageOfCar / 50.0 * proportionVehicleAge));
 			this.lostPrivacy += privacy[3];
-			utility += this.ageOfCar / 50.0 * proportionVehicleAge;
-			return this.ageOfCar / 50.0 * proportionVehicleAge;
+			utility += proportionVehicleAge;
+			return proportionVehicleAge;
 		}
 //		System.out.println("\tNo Offer");
 		return 0;
@@ -312,13 +314,13 @@ public class Vehicle {
 //				System.out.println("\tAge Band of Driver Offer\n\tprivacy = " + privacy[2] + " utility = "
 //						+ formatter.format(this.ageBandOfDriver / 20.0 * proportionAgeBand));
 				offerLostPrivacy += privacy[2];
-				newOffer += this.ageBandOfDriver / 20.0 * proportionAgeBand;
+				newOffer += getBandValue(this.ageBandOfDriver) * proportionAgeBand;
 			}
 			if (min == 3 && privacy[3] < this.threshold) {
 //				System.out.println("\tAge of Vehicle Offer\n\tprivacy = " + privacy[3] + " utility = "
 //						+ formatter.format(this.ageOfCar / 50.0 * proportionVehicleAge));
 				offerLostPrivacy += privacy[3];
-				newOffer += this.ageOfCar / 50.0 * proportionVehicleAge;
+				newOffer += proportionVehicleAge;
 			}
 			if (min == -1) {
 				break;
@@ -352,11 +354,11 @@ public class Vehicle {
 		}
 		if (privacy[2] < this.threshold) {
 
-			res += this.ageBandOfDriver / 20.0 * proportionAgeBand;
+			res += getBandValue(this.ageBandOfDriver) * proportionAgeBand;
 		}
 		if (privacy[3] < this.threshold) {
 
-			res += this.ageOfCar / 50.0 * proportionVehicleAge;
+			res += proportionVehicleAge;
 		}
 		return res;
 	}
@@ -387,6 +389,14 @@ public class Vehicle {
 		return this.id + "\t" + VEHICLETYPE.abbreviation(this.vehicleType) + "\t"
 				+ JOURNEYPURPOSE.abbreviation(this.journeyType) + "\t"
 				+ this.ageBandOfDriver + "\t" + this.ageOfCar;
+	}
+	
+	public double getBandValue(int value){
+		double res=0.8;
+		
+		if(value == 1 || value == 2 || value==10 || value==11)
+			res = 1.0;
+		return res;
 	}
 
 }

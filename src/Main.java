@@ -15,7 +15,7 @@ public class Main {
 	 * To create CSV output, make "printCSV" true To save the experiments to DB,
 	 * make "saveMongo" true
 	 */
-	public static boolean printCSV = true;
+	public static boolean printCSV = false;
 	public static boolean saveMongo = true;
 
 	public static NumberFormat nf = NumberFormat.getNumberInstance(Locale.US);
@@ -23,7 +23,7 @@ public class Main {
 	public static NumberFormat formatter = df;
 	public static DatabaseController dbController;
 
-	public static double[] thresholds = { 0.8, 0.5, 0.3 };
+	public static double[] thresholds = { 0.9, 0.8, 0.7, 0.5, 0.3 };
 	public static ArrayList<Vehicle> vehicles = new ArrayList<>();
 	public static ArrayList<String> v1;
 	public static ArrayList<String> v2;
@@ -65,10 +65,12 @@ public class Main {
 			v2.add(accidentsIndexes.get(i));
 			v1.add("v1");
 			v2.add("v2");
-			for (int k = 0; k < 3; k++) {
+			for (int k = 0; k < thresholds.length; k++) {
 				BasicDBObject type = new BasicDBObject();
 				vehicles.get(0).setThreshold(thresholds[k]);
+				vehicles.get(0).setShareablePrivacy();
 				vehicles.get(1).setThreshold(thresholds[k]);
+				vehicles.get(1).setShareablePrivacy();
 				// System.out.println("Threshold: " + thresholds[k] + "
 				// __________________________________________");
 
@@ -223,6 +225,20 @@ public class Main {
 		if(vehicles.get(index2).totalShareablePrivacy != 0 && vehicles.get(index2).lostPrivacy!=0)
 			shlossv2 = 100 * vehicles.get(index2).lostPrivacy / vehicles.get(index2).totalShareablePrivacy;
 		
+		/*if(shlossv1 >100 || shlossv2 >100){
+			System.out.println(commType);
+			
+			System.out.println("threshold: "+vehicles.get(index1).threshold);
+			System.out.println(vehicles.get(index1).privacy[0]+" "+vehicles.get(index1).privacy[1]+" "+vehicles.get(index1).privacy[2]+" "+vehicles.get(index1).privacy[3]);
+					
+			System.out.println("lost:"+ vehicles.get(index1).lostPrivacy);
+			System.out.println("total shareable:"+ vehicles.get(index1).totalShareablePrivacy);
+			
+			System.out.println("shareable loss:"+shlossv1);
+			System.out.println();
+		}*/
+		
+		
 		item.put("Privacy Loss of Vehicle 1", 100 * vehicles.get(index1).lostPrivacy / vehicles.get(index1).totalPrivacy);
 		item.put("Privacy Loss of Vehicle 2", 100 * vehicles.get(index2).lostPrivacy / vehicles.get(index2).totalPrivacy);
 		item.put("Privacy Shareable Loss of Vehicle 1", shlossv1);
@@ -252,9 +268,9 @@ public class Main {
 		item.put("UtilV2",vehicles.get(index2).utility);
 		item.put("MaxUtilV1",vehicles.get(index1).calculatePossibleUtilityPoints());
 		item.put("MaxUtilV2",vehicles.get(index2).calculatePossibleUtilityPoints());
-		item.put("UtilGainV1",gain1);
-		item.put("UtilGainV2",gain2);
-		item.put("UtilGainAVG", (gain1+gain2)/2);
+		item.put("PrivacyGainV1",gain1);
+		item.put("PrivacyGainV2",gain2);
+		item.put("PrivacyGainAVG", (gain1+gain2)/2);
 		item.put("UP", vehicles.get(index1).utility*vehicles.get(index2).utility);
 		item.put("PP", vehicles.get(index1).utility*vehicles.get(index2).utility*(1-Math.abs(vehicles.get(index1).utility-vehicles.get(index2).utility)));
 		
