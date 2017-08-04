@@ -40,7 +40,7 @@ public class Vehicle {
 	public static NumberFormat nf = NumberFormat.getNumberInstance(Locale.US);
 	public static DecimalFormat df = (DecimalFormat) nf;
 	public static NumberFormat formatter = df;
-
+    public String info = "";
 
 	
 	
@@ -58,7 +58,7 @@ public class Vehicle {
 		this.ageOfCar = ageOfCar;
 		this.utility = 0;
 		this.lostPrivacy = 0;
-		this.threshold = 0.8;
+		this.threshold = 1;
 		this.id = Vehicle.lastId;
 		Vehicle.lastId++;
 	}
@@ -207,42 +207,84 @@ public class Vehicle {
 		return minIndex;
 	}
 	
+	public double makeBidAllOffer() {
+		//int min;
+		
+		info = "";
+
+		info += "\tVehicle Type Offer\n\tprivacy = "
+				+ privacy[0]
+				+ " utility = "
+				+ formatter.format(this.vehicleType.getValue()
+						* proportionVehicleType);
+		this.lostPrivacy += privacy[0];
+		utility += this.vehicleType.getValue() * proportionVehicleType;
+
+		info += "\tJourney Type Offer\n\tprivacy = "
+				+ privacy[1]
+				+ " utility = "
+				+ formatter.format(this.journeyType.getValue()
+						* proportionJourneyType);
+		this.lostPrivacy += privacy[1];
+		utility += this.journeyType.getValue() * proportionJourneyType;
+
+		info += "\tAge Band of Driver Offer\n\tprivacy = "
+				+ privacy[2]
+				+ " utility = "
+				+ formatter.format(getBandValue(this.ageBandOfDriver)
+						* proportionAgeBand);
+		this.lostPrivacy += privacy[2];
+		utility += getBandValue(this.ageBandOfDriver) * proportionAgeBand;
+
+		info += "\tAge of Vehicle Offer\n\tprivacy = " + privacy[3]
+				+ " utility = " + formatter.format(proportionVehicleAge);
+		this.lostPrivacy += privacy[3];
+		utility += proportionVehicleAge;
+		
+		return utility;
+
+	}
+	
+	
 	public double makeOffer() {
 		int min;
+		info = "";
+		
 		if(isTurn) {
 			min = getMinPrivacy(isTurn);
 		} else {
 			min = getMinPrivacy();
 		}
 		if (min == 0 && privacy[0] < this.threshold) {
-//			System.out.println("\tVehicle Type Offer\n\tprivacy = " + privacy[0] + " utility = "
-//					+ formatter.format(this.vehicleType.getValue() * proportionVehicleType));
+			info += "\tVehicle Type Offer\n\tprivacy = " + privacy[0] + " utility = " + formatter.format(this.vehicleType.getValue() * proportionVehicleType);
 			this.lostPrivacy += privacy[0];
 			utility += this.vehicleType.getValue() * proportionVehicleType;
+			
 			return this.vehicleType.getValue() * proportionVehicleType;
 		}
 		if (min == 1 && privacy[1] < this.threshold) {
-//			System.out.println("\tJourney Type Offer\n\tprivacy = " + privacy[1] + " utility = "
-//					+ formatter.format(this.journeyType.getValue() * proportionJourneyType));
+			info += "\tJourney Type Offer\n\tprivacy = " + privacy[1] + " utility = " + formatter.format(this.journeyType.getValue() * proportionJourneyType);
 			this.lostPrivacy += privacy[1];
 			utility += this.journeyType.getValue() * proportionJourneyType;
+			
 			return this.journeyType.getValue() * proportionJourneyType;
 		}
 		if (min == 2 && privacy[2] < this.threshold) {
-//			System.out.println("\tAge Band of Driver Offer\n\tprivacy = " + privacy[2] + " utility = "
-//					+ formatter.format(this.ageBandOfDriver / 20.0 * proportionAgeBand));
+			info += "\tAge Band of Driver Offer\n\tprivacy = " + privacy[2] + " utility = " + formatter.format(getBandValue(this.ageBandOfDriver) * proportionAgeBand);
 			this.lostPrivacy += privacy[2];
 			utility += getBandValue(this.ageBandOfDriver) * proportionAgeBand;
+			
 			return getBandValue(this.ageBandOfDriver) * proportionAgeBand;
 		}
 		if (min == 3 && privacy[3] < this.threshold) {
-//			System.out.println("\tAge of Vehicle Offer\n\tprivacy = " + privacy[3] + " utility = "
-//					+ formatter.format(this.ageOfCar / 50.0 * proportionVehicleAge));
+			info += "\tAge of Vehicle Offer\n\tprivacy = " + privacy[3] + " utility = " + formatter.format(proportionVehicleAge);
 			this.lostPrivacy += privacy[3];
 			utility += proportionVehicleAge;
+			
 			return proportionVehicleAge;
 		}
-//		System.out.println("\tNo Offer");
+		info += "\tNo Offer";
+		
 		return 0;
 	}
 
@@ -299,29 +341,27 @@ public class Vehicle {
 		double newOffer = 0;
 		double offerLostPrivacy = 0;
 		int min;
+		info = "";
+		
 		do {
 			min = getMinPrivacy();
 			if (min == 0 && privacy[0] < this.threshold) {
-//				System.out.println("\tVehicle Type Offer\n\tprivacy = " + privacy[0] + " utility = "
-//						+ formatter.format(this.vehicleType.getValue() * proportionVehicleType));
+				info += "\tVehicle Type Offer\n\tprivacy = " + privacy[0] + " utility = " + formatter.format(this.vehicleType.getValue() * proportionVehicleType);
 				offerLostPrivacy += privacy[0];
 				newOffer += this.vehicleType.getValue() * proportionVehicleType;
 			}
 			if (min == 1 && privacy[1] < this.threshold) {
-//				System.out.println("\tJourney Type Offer\n\tprivacy = " + privacy[1] + " utility = "
-//						+ formatter.format(this.journeyType.getValue() * proportionJourneyType));
+				info += "\tJourney Type Offer\n\tprivacy = " + privacy[1] + " utility = " + formatter.format(this.journeyType.getValue() * proportionJourneyType);
 				offerLostPrivacy += privacy[1];
 				newOffer += this.journeyType.getValue() * proportionJourneyType;
 			}
 			if (min == 2 && privacy[2] < this.threshold) {
-//				System.out.println("\tAge Band of Driver Offer\n\tprivacy = " + privacy[2] + " utility = "
-//						+ formatter.format(this.ageBandOfDriver / 20.0 * proportionAgeBand));
+				info += "\tAge Band of Driver Offer\n\tprivacy = " + privacy[2] + " utility = " + formatter.format(getBandValue(this.ageBandOfDriver) * proportionAgeBand);
 				offerLostPrivacy += privacy[2];
 				newOffer += getBandValue(this.ageBandOfDriver) * proportionAgeBand;
 			}
 			if (min == 3 && privacy[3] < this.threshold) {
-//				System.out.println("\tAge of Vehicle Offer\n\tprivacy = " + privacy[3] + " utility = "
-//						+ formatter.format(this.ageOfCar / 50.0 * proportionVehicleAge));
+				info += "\tAge of Vehicle Offer\n\tprivacy = " + privacy[3] + " utility = " + formatter.format(proportionVehicleAge);
 				offerLostPrivacy += privacy[3];
 				newOffer += proportionVehicleAge;
 			}
@@ -329,18 +369,17 @@ public class Vehicle {
 				break;
 			}
 
-			//System.out.println(this.utility + newOffer+" opp:"+opponentOffer);
-		} while (this.utility + newOffer <= opponentOffer);
+			info += this.utility + newOffer+" opp:"+opponentOffer;
+		} while (this.utility + newOffer >= opponentOffer);
 		
 		if (min == -1 && this.utility + newOffer < opponentOffer) {
-			//System.out.println();
-			//System.out.println("\t--No Offer--");
-
+			info += "\n\t--No Offer--";
+			
 			return 0;
 		}
 		this.lostPrivacy += offerLostPrivacy;
 		this.utility += newOffer;
-
+		
 		return newOffer;
 
 	}

@@ -17,6 +17,7 @@ public class Main {
 	 */
 	public static boolean printCSV = false;
 	public static boolean saveMongo = true;
+	public static boolean printInfo = false;
 
 	public static NumberFormat nf = NumberFormat.getNumberInstance(Locale.US);
 	public static DecimalFormat df = (DecimalFormat) nf;
@@ -71,38 +72,44 @@ public class Main {
 				vehicles.get(0).setShareablePrivacy();
 				vehicles.get(1).setThreshold(thresholds[k]);
 				vehicles.get(1).setShareablePrivacy();
-				// System.out.println("Threshold: " + thresholds[k] + "
-				// __________________________________________");
-
-				// System.out.println("Basic
-				// ---------------------------------------------------------------------");
+				if(printInfo){
+				System.out.println("##################### Accident Index: "+accidentsIndexes.get(i) + " START");
+				System.out.println("Threshold: " + thresholds[k] + "__________________________________________");
+				}
+				
+				if(printInfo) System.out.println("Basic All ----------------------------------------------------------------");
+				type.put("BidAll", startAndResult(0, 1, 5));
+				vehicles.get(0).clear();
+				vehicles.get(1).clear();
+				
+				if(printInfo) System.out.println("Basic ----------------------------------------------------------------");
 				type.put("Basic", startAndResult(0, 1, 1));
 				vehicles.get(0).clear();
 				vehicles.get(1).clear();
 
 				vehicles.get(0).isTurn = true;
 				vehicles.get(1).isTurn = true;
-				// System.out.println("Turn Based
-				// ----------------------------------------------------------------");
+				
+				if(printInfo) System.out.println("Turn Based ----------------------------------------------------------------");
 				type.put("Turn Based", startAndResult(0, 1, 2));
 				vehicles.get(0).clear();
 				vehicles.get(1).clear();
 				vehicles.get(0).isTurn = false;
 				vehicles.get(1).isTurn = false;
 
-				// System.out.println("Auction Based
-				// -------------------------------------------------------------");
+				if(printInfo) System.out.println("Auction Based -------------------------------------------------------------");
 				type.put("Auction Based", startAndResult(0, 1, 3));
 				vehicles.get(0).clear();
 				vehicles.get(1).clear();
 
-				// System.out.println("Modified Auction Based
-				// ----------------------------------------------------");
+				if(printInfo) System.out.println("Modified Auction Based ----------------------------------------------------");
 				type.put("Modified Auction", startAndResult(0, 1, 4));
 				vehicles.get(0).clear();
 				vehicles.get(1).clear();
 
 				thres.put(("" + thresholds[k]).replace('.', ','), type);
+				
+				if(printInfo) System.out.println("##################### Accident Index: "+accidentsIndexes.get(i)+ " END #####################");
 			}
 
 			formattedString = v1.toString().replace("[", "") // remove the right
@@ -197,9 +204,12 @@ public class Main {
 			result = turnBaseNegotiation(vehicles.get(index1), vehicles.get(index2));
 		} else if (commType == 3) {
 			result = auctionNegotiation(vehicles.get(index1), vehicles.get(index2));
-		} else {
+		} else if (commType == 4) {
 			result = modifiedNegotiation(vehicles.get(index1), vehicles.get(index2));
+		} else {
+			result = basicAllNegotiation(vehicles.get(index1), vehicles.get(index2));
 		}
+		
 /*		System.out.println("---------------------------------");
 		if (result == 1) {
 			System.out.println("Vehicle " + (index1 + 1) + " gets priority");
@@ -286,20 +296,18 @@ public class Main {
 		// Auction
 		double oldUtility1 = 0, oldUtility2 = 0;
 		double utility1 = 0, utility2 = 0;
-		// System.out.println("\n-----------" + "Turn for v" + 1 +
-		// "-----------\n");
+		String info="";
+		info += "\n-----------" + "Turn for v" + 1 + "-----------\n";
 		utility1 += v1.makeOffer(0);
-		// System.out.println("\nv1 utility: " + utility1 + " v2 utility: " +
-		// utility2);
+		info += "\nv1 utility: " + utility1 + " v2 utility: " + utility2;
 		int turn = 2, count = 0;
 		while (++count < 25) {
-			// System.out.println("\n-----------" + "Turn for v" + turn +
-			// "-----------\n");
+			info += "\n-----------" + "Turn for v" + turn + "-----------\n";
 			if (turn == 1) {
 				oldUtility1 = utility1;
 				utility1 += v1.makeOffer(utility2);
-				// System.out.println("\nv1 utility: " + utility1 + " v2
-				// utility: " + utility2);
+				info += v1.info;
+				info += "\nv1 utility: " + utility1 + " v2 utility: " + utility2;
 
 				if (utility1 - oldUtility1 < 0.00001) {
 					break;
@@ -308,14 +316,18 @@ public class Main {
 			} else {
 				oldUtility2 = utility2;
 				utility2 += v2.makeOffer(utility1);
-				// System.out.println("\nv1 utility: " + utility1 + " v2
-				// utility: " + utility2);
+				info += v2.info;
+				info += "\nv1 utility: " + utility1 + " v2 utility: " + utility2;
 				if (utility2 - oldUtility2 < 0.00001) {
 					break;
 				}
 				turn = 1;
 			}
 		}
+		
+		if(printInfo)
+			System.out.println(info);
+		
 		if (utility1 >= utility2) {
 			return 1;
 		} else {
@@ -327,20 +339,18 @@ public class Main {
 		// Auction
 		double oldUtility1 = 0, oldUtility2 = 0;
 		double utility1 = 0, utility2 = 0;
-		// System.out.println("\n-----------" + "Turn for v" + 1 +
-		// "-----------\n");
+		String info= "";
+		info += "\n-----------" + "Turn for v" + 1 +"-----------\n";
 		utility1 += v1.makeOffer();
-		// System.out.println("\nv1 utility: " + utility1 + " v2 utility: " +
-		// utility2);
+		info += "\nv1 utility: " + utility1 + " v2 utility: " + utility2;
 		int turn = 2, count = 0;
 		while (++count < 25) {
-			// System.out.println("\n-----------" + "Turn for v" + turn +
-			// "-----------\n");
+			info += "\n-----------" + "Turn for v" + turn + "-----------\n";
 			if (turn == 1) {
 				oldUtility1 = utility1;
 				utility1 += v1.makeOffer();
-				// System.out.println("\nv1 utility: " + utility1 + " v2
-				// utility: " + utility2);
+				info += v1.info;
+				info += "\nv1 utility: " + utility1 + " v2 utility: " + utility2;
 				if (utility1 - utility2 > 0.0001) {
 					turn = 2;
 				}
@@ -350,8 +360,8 @@ public class Main {
 			} else {
 				oldUtility2 = utility2;
 				utility2 += v2.makeOffer();
-				// System.out.println("\nv1 utility: " + utility1 + " v2
-				// utility: " + utility2);
+				info += v2.info;
+				info += "\nv1 utility: " + utility1 + " v2 utility: " + utility2;
 				if (utility2 - utility1 > 0.0001) {
 					turn = 1;
 				}
@@ -360,6 +370,10 @@ public class Main {
 				}
 			}
 		}
+		
+		if(printInfo)
+			System.out.println(info);
+		
 		if (utility1 >= utility2) {
 			return 1;
 		} else {
@@ -372,45 +386,92 @@ public class Main {
 		double utility1 = 0, utility2 = 0;
 		String[] turnType = { "\n--------Vehicle Type Turn--------\n", "\n-------Journey Type Turn-------\n",
 				"\n------Age Band of Driver Turn------\n", "\n-------Age of Vehicle Turn-------\n" };
+		String info="";
 		for (int i = 0; i < 4; i++) {
-			// System.out.println(turnType[i]);
-			// System.out.println("\tOffer of v" + 1);
-			// System.out.println("\t-----------");
+			info += turnType[i];
+			info += "\tOffer of v" + 1;
+			info += "\t-----------";
 			utility1 += v1.makeOffer();
-			// System.out.println("\n\tOffer of v" + 2);
-			// System.out.println("\t-----------");
+			info += v1.info;
+			info += "\n\tOffer of v" + 2;
+			info += "\t-----------";
 			utility2 += v2.makeOffer();
-			// System.out.println("\nv1 utility: " + utility1 + " v2 utility: "
-			// + utility2);
-			if (utility1 > utility2) {
+			info += "\nv1 utility: " + utility1 + " v2 utility: " + utility2;
+			info += v2.info;
+			
+			if(printInfo)
+				System.out.println(info);
+			
+			if (utility1 >= utility2) {
 				return 1;
-			} else if (utility1 < utility2) {
+			} else {
 				return 2;
 			}
 		}
 		return 1;
 	}
 
+	public static int basicAllNegotiation(Vehicle v1, Vehicle v2) {
+		// Basic All Communication
+		double utility1 = 0, utility2 = 0;
+		String info = "";
+
+		info += "\n\tOffers of v" + 1;
+		info += "\t------------";
+
+		utility1 += v1.makeBidAllOffer();
+		info += v1.info;
+
+
+		if (utility1 == 0) info += "\tNo Offer";
+		info += "\n\tOffers of v" + 2;
+		info += "\t------------";
+
+		utility2 += v2.makeBidAllOffer();
+		info += v2.info;
+
+
+		if (utility2 == 0) info += "\tNo Offer";
+		info += "\nv1 utility: " + formatter.format(utility1) +" v2 utility: " + formatter.format(utility2);
+
+		if(printInfo)
+			System.out.println(info);
+
+		if (utility1 >= utility2) {
+			return 1;
+		} else {
+			return 2;
+		}
+	}
+	
 	public static int basicNegotiation(Vehicle v1, Vehicle v2) {
 		// Basic Communication
 		double utility1 = 0, utility2 = 0;
-		// System.out.println("\n\tOffers of v" + 1);
-		// System.out.println("\t------------");
+		String info = "";
+		
+		info += "\n\tOffers of v" + 1;
+		info += "\t------------";
 		for (int i = 0; i < 4; i++) {
 			utility1 += v1.makeOffer();
+			info += v1.info;
 		}
-		/*
-		 * if (utility1 == 0) System.out.println("\tNo Offer");
-		 * System.out.println("\n\tOffers of v" + 2);
-		 * System.out.println("\t------------");
-		 */ for (int i = 0; i < 4; i++) {
+		
+		  if (utility1 == 0) info += "\tNo Offer";
+		  info += "\n\tOffers of v" + 2;
+		  info += "\t------------";
+		  
+		  for (int i = 0; i < 4; i++) {
 			utility2 += v2.makeOffer();
+			info += v2.info;
 		}
-		/*
-		 * if (utility2 == 0) System.out.println("\tNo Offer");
-		 * System.out.println("\nv1 utility: " + formatter.format(utility1) +
-		 * " v2 utility: " + formatter.format(utility2));
-		 */ if (utility1 >= utility2) {
+		
+		  if (utility2 == 0) info += "\tNo Offer";
+		  info += "\nv1 utility: " + formatter.format(utility1) +" v2 utility: " + formatter.format(utility2);
+		  
+		  if(printInfo)
+				System.out.println(info);
+		  
+		  if (utility1 >= utility2) {
 			return 1;
 		} else {
 			return 2;
