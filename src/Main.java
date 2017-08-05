@@ -16,8 +16,8 @@ public class Main {
 	 * make "saveMongo" true
 	 */
 	public static boolean printCSV = false;
-	public static boolean saveMongo = true;
-	public static boolean printInfo = false;
+	public static boolean saveMongo = false;
+	public static boolean printInfo = true;
 
 	public static NumberFormat nf = NumberFormat.getNumberInstance(Locale.US);
 	public static DecimalFormat df = (DecimalFormat) nf;
@@ -45,14 +45,22 @@ public class Main {
 		ArrayList<String> accidentsIndexes =
 				// (ArrayList<String>) dbController.getAccidentIndexes();
 				getGoodIDS();
+		
+		//accidentsIndexes = new ArrayList<String>();
+		//accidentsIndexes.add("2015331500103"); 
 
 		// Print accident number
 		//System.out.println(accidentsIndexes.size());
+		
+		
 
 		for (int i = 0; i < accidentsIndexes.size(); i++) {
+			
 			vehicles = dbController.getVehiclesByAccidentIndex(accidentsIndexes.get(i));
 			vehicles.get(0).setPrivacyRandom();
 			vehicles.get(1).setPrivacyRandom();
+			//vehicles.get(0).setPrivacy(0.76,0.885,0.15,0.452);
+			//vehicles.get(1).setPrivacy(0.4777,0.879,0.334,0.948);
 
 			// Print vehicle info
 			//System.out.println(vehicles.get(0));
@@ -249,6 +257,11 @@ public class Main {
 			System.out.println();
 	    }*/
 		
+		if(printInfo) {
+			System.out.println("lost privacies: "+vehicles.get(index1).lostPrivacy+" "+vehicles.get(index2).lostPrivacy);
+			System.out.println("Privacy Loss of Vehicle 1 "+ 100 * vehicles.get(index1).lostPrivacy / vehicles.get(index1).totalPrivacy);
+			System.out.println("Privacy Loss of Vehicle 2 "+ 100 * vehicles.get(index2).lostPrivacy / vehicles.get(index2).totalPrivacy);
+		}
 		
 		item.put("Privacy Loss of Vehicle 1", 100 * vehicles.get(index1).lostPrivacy / vehicles.get(index1).totalPrivacy);
 		item.put("Privacy Loss of Vehicle 2", 100 * vehicles.get(index2).lostPrivacy / vehicles.get(index2).totalPrivacy);
@@ -297,16 +310,17 @@ public class Main {
 		double oldUtility1 = 0, oldUtility2 = 0;
 		double utility1 = 0, utility2 = 0;
 		String info="";
-		info += "\n-----------" + "Turn for v" + 1 + "-----------\n";
-		utility1 += v1.makeOffer(0);
-		info += "\nv1 utility: " + utility1 + " v2 utility: " + utility2;
-		int turn = 2, count = 0;
+		//info += "\n-----------" + "Turn for v" + 1 + "-----------\n";
+		//utility1 += v1.makeOffer(0);
+		//info += v1.info+"\n";
+		//info += "\nv1 utility: " + utility1 + " v2 utility: " + utility2;
+		int turn = 1, count = 0;
 		while (++count < 25) {
 			info += "\n-----------" + "Turn for v" + turn + "-----------\n";
 			if (turn == 1) {
 				oldUtility1 = utility1;
 				utility1 += v1.makeOffer(utility2);
-				info += v1.info;
+				info += v1.info+"\n";
 				info += "\nv1 utility: " + utility1 + " v2 utility: " + utility2;
 
 				if (utility1 - oldUtility1 < 0.00001) {
@@ -316,7 +330,7 @@ public class Main {
 			} else {
 				oldUtility2 = utility2;
 				utility2 += v2.makeOffer(utility1);
-				info += v2.info;
+				info += v2.info+"\n";
 				info += "\nv1 utility: " + utility1 + " v2 utility: " + utility2;
 				if (utility2 - oldUtility2 < 0.00001) {
 					break;
@@ -342,6 +356,7 @@ public class Main {
 		String info= "";
 		info += "\n-----------" + "Turn for v" + 1 +"-----------\n";
 		utility1 += v1.makeOffer();
+		info += v1.info+"\n";
 		info += "\nv1 utility: " + utility1 + " v2 utility: " + utility2;
 		int turn = 2, count = 0;
 		while (++count < 25) {
@@ -349,7 +364,7 @@ public class Main {
 			if (turn == 1) {
 				oldUtility1 = utility1;
 				utility1 += v1.makeOffer();
-				info += v1.info;
+				info += v1.info+"\n";
 				info += "\nv1 utility: " + utility1 + " v2 utility: " + utility2;
 				if (utility1 - utility2 > 0.0001) {
 					turn = 2;
@@ -360,7 +375,7 @@ public class Main {
 			} else {
 				oldUtility2 = utility2;
 				utility2 += v2.makeOffer();
-				info += v2.info;
+				info += v2.info+"\n";
 				info += "\nv1 utility: " + utility1 + " v2 utility: " + utility2;
 				if (utility2 - utility1 > 0.0001) {
 					turn = 1;
@@ -417,18 +432,18 @@ public class Main {
 		String info = "";
 
 		info += "\n\tOffers of v" + 1;
-		info += "\t------------";
+		info += "\n";
 
 		utility1 += v1.makeBidAllOffer();
-		info += v1.info;
+		info += v1.info + "\n";
 
 
 		if (utility1 == 0) info += "\tNo Offer";
 		info += "\n\tOffers of v" + 2;
-		info += "\t------------";
+		info += "\n";
 
 		utility2 += v2.makeBidAllOffer();
-		info += v2.info;
+		info += v2.info+"\n";
 
 
 		if (utility2 == 0) info += "\tNo Offer";
@@ -453,7 +468,7 @@ public class Main {
 		info += "\t------------";
 		for (int i = 0; i < 4; i++) {
 			utility1 += v1.makeOffer();
-			info += v1.info;
+			info += v1.info+"\n";
 		}
 		
 		  if (utility1 == 0) info += "\tNo Offer";
@@ -462,7 +477,7 @@ public class Main {
 		  
 		  for (int i = 0; i < 4; i++) {
 			utility2 += v2.makeOffer();
-			info += v2.info;
+			info += v2.info+"\n";
 		}
 		
 		  if (utility2 == 0) info += "\tNo Offer";
