@@ -85,12 +85,12 @@ public class Main {
 				System.out.println("Threshold: " + thresholds[k] + "__________________________________________");
 				}
 				
-				if(printInfo) System.out.println("Basic All ----------------------------------------------------------------");
+				if(printInfo) System.out.println("\n *** Strategy 1: Bid All ----------------------------------------------------------------");
 				type.put("BidAll", startAndResult(0, 1, 5));
 				vehicles.get(0).clear();
 				vehicles.get(1).clear();
 				
-				if(printInfo) System.out.println("Basic ----------------------------------------------------------------");
+				if(printInfo) System.out.println("\n *** Strategy 2: Bid Privacy Aware ----------------------------------------------------------------");
 				type.put("Basic", startAndResult(0, 1, 1));
 				vehicles.get(0).clear();
 				vehicles.get(1).clear();
@@ -98,19 +98,19 @@ public class Main {
 				vehicles.get(0).isTurn = true;
 				vehicles.get(1).isTurn = true;
 				
-				if(printInfo) System.out.println("Turn Based ----------------------------------------------------------------");
-				type.put("Turn Based", startAndResult(0, 1, 2));
-				vehicles.get(0).clear();
-				vehicles.get(1).clear();
-				vehicles.get(0).isTurn = false;
-				vehicles.get(1).isTurn = false;
+//				if(printInfo) System.out.println("Turn Based ----------------------------------------------------------------");
+//				type.put("Turn Based", startAndResult(0, 1, 2));
+//				vehicles.get(0).clear();
+//				vehicles.get(1).clear();
+//				vehicles.get(0).isTurn = false;
+//				vehicles.get(1).isTurn = false;
+//
+//				if(printInfo) System.out.println("Auction Based -------------------------------------------------------------");
+//				type.put("Auction Based", startAndResult(0, 1, 3));
+//				vehicles.get(0).clear();
+//				vehicles.get(1).clear();
 
-				if(printInfo) System.out.println("Auction Based -------------------------------------------------------------");
-				type.put("Auction Based", startAndResult(0, 1, 3));
-				vehicles.get(0).clear();
-				vehicles.get(1).clear();
-
-				if(printInfo) System.out.println("Modified Auction Based ----------------------------------------------------");
+				if(printInfo) System.out.println("\n *** Strategy 3: Bid Privacy Incremental ----------------------------------------------------");
 				type.put("Modified Auction", startAndResult(0, 1, 4));
 				vehicles.get(0).clear();
 				vehicles.get(1).clear();
